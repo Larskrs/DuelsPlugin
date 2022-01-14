@@ -1,6 +1,8 @@
 package net.larskrs.plugins.duels.Files;
 
 import net.larskrs.plugins.duels.Duels;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -15,6 +17,7 @@ public class KitsFile {
 
     public KitsFile (Duels duels) {
         this.duels = duels;
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "loading... kits.yml");
 
         file = new File(duels.getDataFolder(), "kits.yml");
         if (!file.exists()) {

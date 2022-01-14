@@ -1,6 +1,7 @@
 package net.larskrs.plugins.duels;
 
 import net.larskrs.plugins.duels.Files.KitsFile;
+import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.commands.DuelCommand;
 import net.larskrs.plugins.duels.listener.ConnectListener;
 import net.larskrs.plugins.duels.listener.GameListener;
@@ -27,6 +28,7 @@ public final class Duels extends JavaPlugin {
         getCommand("duel").setExecutor(new DuelCommand(this));
 
         new KitsFile(this);
+        new PlayerDataFile(this);
 
     }
 

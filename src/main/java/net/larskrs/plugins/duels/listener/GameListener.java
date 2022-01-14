@@ -88,10 +88,13 @@ public class GameListener implements Listener {
     public void onPlayerHunger(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player) {
             Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
+            if (a != null) {
                 if (a.getState() != GameState.LIVE) {
                     e.setCancelled(true);
                 }
-
+            } else {
+                e.setCancelled(true);
+            }
         }
     }
     @EventHandler

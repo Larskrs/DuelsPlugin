@@ -2,6 +2,7 @@ package net.larskrs.plugins.duels.instances;
 
 import com.google.common.collect.TreeMultimap;
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.Kits.ArcherKit;
 import net.larskrs.plugins.duels.Kits.KnightKit;
 import net.larskrs.plugins.duels.enums.GameState;
@@ -14,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.*;
 
@@ -30,13 +33,15 @@ public class Arena {
     private GameState state;
     private Countdown countdown;
     private Game game;
+    private Scoreboard scoreboard;
 
     public Arena(Duels duels, int id, Location spawn) {
         this.duels = duels;
 
         this.id = id;
         this.spawn = spawn;
-
+        ScoreboardManager sm = Bukkit.getScoreboardManager();
+        scoreboard = sm.getNewScoreboard();
         this.state = GameState.RECRUITING;
         this.players = new ArrayList<>();
         this.teams = new HashMap<>();
@@ -94,7 +99,7 @@ public class Arena {
 
 /* Player */
     public void addPlayer(Player player) {
-
+        PlayerDataFile.getLastSavedKit(player.getUniqueId());
         players.add(player.getUniqueId());
         player.teleport(this.spawn);
         player.setHealth(player.getMaxHealth());
@@ -136,6 +141,8 @@ public class Arena {
     public void setTeam (Player player, Team team) {
         removeTeam(player);
         teams.put(player.getUniqueId(), team);
+
+
         player.sendMessage(ChatColor.YELLOW + "You have been placed on the " + team.getDisplay() + ChatColor.YELLOW + " team!");
     }
     public void removeTeam(Player player) {
@@ -162,6 +169,8 @@ public class Arena {
         } else if (type == KitType.ARCHER){
             kits.put(uuid, new ArcherKit(type, uuid));
         }
+        PlayerDataFile.getConfig().set(Bukkit.getPlayer(uuid).getName() + ".kit", type.name());
+        PlayerDataFile.saveFile();
     }
     public void removeKit(UUID uuid) {
         if (kits.containsKey(uuid)) {
