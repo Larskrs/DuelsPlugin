@@ -1,0 +1,26 @@
+required-players: 2
+startup-time: 20
+lobby-spawn:
+  world: 'world'
+  x: 0
+  y: 65
+  z: 0
+  yaw: 0
+  pitch: 0
+arenas:
+  0:
+    spawn:
+      world: 'world'
+      x: 65
+      y: 65
+      z: 65
+      yaw: 0
+      pitch: 0
+  1:
+    spawn:
+      world: 'world'
+      x: 65
+      y: 65
+      z: 65
+      yaw: 0
+      pitch: 0
