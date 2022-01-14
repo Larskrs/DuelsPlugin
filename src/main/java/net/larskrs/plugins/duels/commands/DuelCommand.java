@@ -1,6 +1,7 @@
 package net.larskrs.plugins.duels.commands;
 
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.GUI.KitGUI;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
@@ -35,6 +36,17 @@ public class DuelCommand implements CommandExecutor {
                 if (a != null) {
                     if (a.getState() != GameState.LIVE) {
                         new TeamGUI(a , p);
+                    } else {
+                        p.sendMessage(ChatColor.RED + "You can not use this while playing!");
+                    }
+                } else {
+                    p.sendMessage(ChatColor.RED + "You are not in a match!");
+                }
+            } else if (args.length == 1 && args[0].equalsIgnoreCase("kit")) {
+                Arena a = duels.getArenaManager().getArena(p);
+                if (a != null) {
+                    if (a.getState() != GameState.LIVE) {
+                        new KitGUI(a , p);
                     } else {
                         p.sendMessage(ChatColor.RED + "You can not use this while playing!");
                     }

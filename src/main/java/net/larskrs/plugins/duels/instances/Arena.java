@@ -2,13 +2,18 @@ package net.larskrs.plugins.duels.instances;
 
 import com.google.common.collect.TreeMultimap;
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.Kits.ArcherKit;
+import net.larskrs.plugins.duels.Kits.KnightKit;
 import net.larskrs.plugins.duels.enums.GameState;
+import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -20,6 +25,7 @@ public class Arena {
     private Location spawn;
 
     private List<UUID> players;
+    private HashMap<UUID, Kit> kits;
     private HashMap<UUID, Team> teams;
     private GameState state;
     private Countdown countdown;
@@ -36,6 +42,7 @@ public class Arena {
         this.teams = new HashMap<>();
         this.countdown = new Countdown(duels, this);
         this.game = new Game(this);
+        this.kits = new HashMap<>();
     }
 
     public List<UUID> getPlayers() { return players; }
@@ -56,11 +63,14 @@ public class Arena {
             if (kickPlayers) {
                 Location loc = ConfigManager.getLobbySpawnLocation();
                 for (UUID uuid : players) {
-                    Bukkit.getPlayer(uuid).teleport(loc);
+                    Player p = Bukkit.getPlayer(uuid);
+                    p.teleport(loc);
+                    removeKit(p.getUniqueId());
                 }
                 players.clear();
                 teams.clear();
             }
+            kits.clear();
             sendTitle("", ""); //Resets the title to instantly hide.
             state = GameState.RECRUITING;
             countdown.cancel();
@@ -88,8 +98,8 @@ public class Arena {
         players.add(player.getUniqueId());
         player.teleport(this.spawn);
         player.setHealth(player.getMaxHealth());
+        player.getInventory().clear();
 
-        //TODO: Assign to team.
         TreeMultimap<Integer, Team> count = TreeMultimap.create();
         for (Team t : Team.values()) {
             count.put(getTeamCount(t), t);
@@ -108,7 +118,10 @@ public class Arena {
         player.setHealth(player.getMaxHealth());
         removeTeam(player);
         player.closeInventory();
+        removeKit(player.getUniqueId());
         player.sendTitle("", ""); //Resets the title to instantly hide.
+        player.getInventory().clear();
+        player.setFoodLevel(20);
 
         if (state == GameState.COUNTDOWN && players.size() < ConfigManager.getRequiredPlayers()) {
             sendMessage(ChatColor.RED + "Not enough players for game to start. :(");
@@ -141,5 +154,25 @@ public class Arena {
     }
     public Team getTeam(Player p) {
         return teams.get(p.getUniqueId());
+    }
+    public void setKit(UUID uuid, KitType type) {
+        removeKit(uuid);
+        if (type == KitType.KNIGHT) {
+            kits.put(uuid, new KnightKit(type, uuid));
+        } else if (type == KitType.ARCHER){
+            kits.put(uuid, new ArcherKit(type, uuid));
+        }
+    }
+    public void removeKit(UUID uuid) {
+        if (kits.containsKey(uuid)) {
+            kits.get(uuid).remove();
+            kits.remove(uuid);
+        }
+    }
+    public HashMap<UUID, Kit> getKits() {
+        return kits;
+    }
+    public KitType getKit(Player player) {
+        return kits.containsKey(player.getUniqueId()) ? kits.get(player.getUniqueId()).getType() : null;
     }
 }
