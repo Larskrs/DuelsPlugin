@@ -30,33 +30,7 @@ public class GameListener implements Listener {
         this.duels = duels;
     }
 
-    @EventHandler
-    public void onPlayerKill(PlayerDeathEvent e) {
 
-        if (e.getEntity().getKiller() != null) {
-            Player killer = e.getEntity().getKiller();
-            Player p = e.getEntity();
-
-            if (duels.getArenaManager().getArena(p) != null && duels.getArenaManager().getArena(killer) != null) {
-                // The two players are both in arena.
-                Arena pArena = duels.getArenaManager().getArena(p);
-                Arena killerArena = duels.getArenaManager().getArena(killer);
-                if (killerArena == pArena && killerArena.getState().equals(GameState.LIVE)) {
-                    // Both players were in the live match.
-                    killerArena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + p.getName() + " was killed by " + killer.getName() + "!");
-                    killerArena.getGame().addPoint(pArena.getTeam(killer));
-
-                    e.getDrops().clear();
-                    e.getDrops().add(new ItemStack(Material.GOLDEN_APPLE));
-
-                }
-            }
-
-
-
-        }
-
-    }
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         if (duels.getArenaManager().getArena(e.getPlayer()) != null) {

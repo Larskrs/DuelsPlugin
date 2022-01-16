@@ -3,6 +3,9 @@ package net.larskrs.plugins.duels.instances;
 import com.google.common.collect.TreeMultimap;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
+import net.larskrs.plugins.duels.Games.Deathmatch;
+import net.larskrs.plugins.duels.Games.Game;
+import net.larskrs.plugins.duels.Games.LastStanding;
 import net.larskrs.plugins.duels.Kits.ArcherKit;
 import net.larskrs.plugins.duels.Kits.KnightKit;
 import net.larskrs.plugins.duels.enums.GameState;
@@ -12,9 +15,7 @@ import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
@@ -34,10 +35,12 @@ public class Arena {
     private Countdown countdown;
     private Game game;
     private Scoreboard scoreboard;
+    private ArenaOptions options;
 
     public Arena(Duels duels, int id, Location spawn) {
         this.duels = duels;
-
+        this.options = loadOptions();
+        setGame();
         this.id = id;
         this.spawn = spawn;
         ScoreboardManager sm = Bukkit.getScoreboardManager();
@@ -46,10 +49,24 @@ public class Arena {
         this.players = new ArrayList<>();
         this.teams = new HashMap<>();
         this.countdown = new Countdown(duels, this);
-        this.game = new Game(this);
         this.kits = new HashMap<>();
     }
 
+    private void setGame() {
+        if (options.GameType == "DEATHMATCH") {
+            this.game = new Deathmatch(duels, this);
+        } else if (options.GameType == "LASTSTANDING") {
+            this.game = new LastStanding(duels, this);
+        }
+    }
+    private ArenaOptions loadOptions() {
+        ArenaOptions o = new ArenaOptions();
+        o.GameType = duels.getConfig().getString("arenas." + getId() + ".options.game-type");
+        o.winAmount = duels.getConfig().getInt("arenas." + getId() + ".options.points-to-win");
+
+        return o;
+    }
+    public ArenaOptions getOptions () {return options;}
     public List<UUID> getPlayers() { return players; }
 
     public GameState getState () {return state;}
@@ -80,7 +97,8 @@ public class Arena {
             state = GameState.RECRUITING;
             countdown.cancel();
             countdown = new Countdown(duels, this);
-            game = new Game(this);
+            game.unregister();
+            setGame();
         }
 
     /* Tools */

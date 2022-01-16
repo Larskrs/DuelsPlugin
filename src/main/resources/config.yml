@@ -9,6 +9,9 @@ lobby-spawn:
   pitch: 0
 arenas:
   0:
+    options:
+      game-type: 'DEATHMATCH'
+      points-to-win: 5
     spawn:
       world: 'world'
       x: 65
@@ -34,6 +37,8 @@ arenas:
           yaw: 180
           pitch: 0
   1:
+    options:
+      game-type: 'LASTSTANDING'
     spawn:
       world: 'world'
       x: 65

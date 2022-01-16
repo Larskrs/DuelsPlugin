@@ -1,23 +1,27 @@
-package net.larskrs.plugins.duels.instances;
+package net.larskrs.plugins.duels.Games;
 
+import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.enums.GameState;
+import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Game {
+public abstract class Game implements Listener {
 
-    private Arena arena;
-    private HashMap<Team, Integer> points;
+    protected Arena arena;
 
-    public Game(Arena arena) {
+
+    public Game(Duels duels, Arena arena) {
         this.arena = arena;
-        this.points = new HashMap<>();
+        Bukkit.getPluginManager().registerEvents(this, duels);
     }
 
     public void start() {
@@ -25,6 +29,7 @@ public class Game {
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Kill the other team!");
 
+        onStart();
 
         for (UUID uuid : arena.getPlayers()) {
             Player p = Bukkit.getPlayer(uuid);
@@ -33,20 +38,11 @@ public class Game {
                 p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
 
         }
-
-        for (Team t : Team.values()) {
-            points.put(t, 0);
-
-        }
     }
-    public void addPoint(Team team) {
-        int teamPoints = points.get(team) + 1;
-        if (teamPoints == 3) {
-            arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
-            arena.reset(true);
-        }
 
-        arena.sendMessage(ChatColor.GOLD + "[GAME] " +ChatColor.GREEN + "+1 POINT for " + team.getDisplay() + ChatColor.GREEN + "! ");
-        points.replace(team, teamPoints);
+    public abstract void onStart();
+
+    public void unregister() {
+        HandlerList.unregisterAll(this);
     }
 }
