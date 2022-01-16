@@ -1,10 +1,12 @@
 package net.larskrs.plugins.duels.GUI;
 
+import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +26,12 @@ public class KitGUI {
 
             ArrayList<String> islore = new ArrayList<>();
             islore.add(type.getDescription());
+            if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) != null) {
+                if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) == type) {
+                    isMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+                    islore.add(ChatColor.YELLOW + "(Equipped)");
+                }
+            }
             isMeta.setLocalizedName(type.name());
             isMeta.setLore(islore);
             is.setItemMeta(isMeta);

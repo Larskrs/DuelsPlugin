@@ -8,6 +8,7 @@ import net.larskrs.plugins.duels.listener.GameListener;
 import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,6 +20,9 @@ public final class Duels extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
+        Bukkit.getConsoleSender().sendMessage("§6§m------------ §6Simple Duels §6§m------------");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "developed by: Larskrs");
         ConfigManager.setupConfig(this); // STEP 1
         arenaManager = new ArenaManager(this); // STEP 2
 

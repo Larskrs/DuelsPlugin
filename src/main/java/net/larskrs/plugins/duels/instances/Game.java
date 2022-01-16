@@ -1,6 +1,7 @@
 package net.larskrs.plugins.duels.instances;
 
 import net.larskrs.plugins.duels.enums.GameState;
+import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,13 +25,18 @@ public class Game {
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Kill the other team!");
 
+
         for (UUID uuid : arena.getPlayers()) {
-            arena.getKits().get(uuid).onStart(Bukkit.getPlayer(uuid));
-            Bukkit.getPlayer(uuid).closeInventory();
+            Player p = Bukkit.getPlayer(uuid);
+            arena.getKits().get(uuid).onStart(p);
+            p.closeInventory();
+                p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
+
         }
 
         for (Team t : Team.values()) {
             points.put(t, 0);
+
         }
     }
     public void addPoint(Team team) {

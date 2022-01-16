@@ -1,5 +1,5 @@
-required-players: 2
-startup-time: 20
+required-players: 20
+startup-time: 5
 lobby-spawn:
   world: 'world'
   x: 0
@@ -16,6 +16,23 @@ arenas:
       z: 65
       yaw: 0
       pitch: 0
+    teams:
+      RED:
+        spawn:
+          world: 'world'
+          x: 65
+          y: 80
+          z: 35
+          yaw: 0
+          pitch: 0
+      BLUE:
+        spawn:
+          world: 'world'
+          x: 65
+          y: 80
+          z: 75
+          yaw: 180
+          pitch: 0
   1:
     spawn:
       world: 'world'

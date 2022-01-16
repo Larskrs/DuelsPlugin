@@ -2,6 +2,8 @@ package net.larskrs.plugins.duels.managers;
 
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.instances.Arena;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -14,13 +16,14 @@ public class ArenaManager {
     private List<Arena> arenas;
 
     public ArenaManager (Duels duels) {
-        System.out.println("Loading ArenaManager...");
+
         this.duels = duels;
         arenas  = new ArrayList<>();
         FileConfiguration config = duels.getConfig();
         for (String s : config.getConfigurationSection("arenas").getKeys(false)) {
             arenas.add(new Arena(duels, Integer.parseInt(s), ConfigManager.getArenaSpawn(Integer.parseInt(s))));
         }
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "loaded: " + arenas.size() + " arenas.");
     }
 
     public List<Arena> getArenas () { return arenas; }

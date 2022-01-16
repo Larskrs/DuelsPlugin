@@ -99,7 +99,11 @@ public class Arena {
 
 /* Player */
     public void addPlayer(Player player) {
-        PlayerDataFile.getLastSavedKit(player.getUniqueId());
+        KitType kitType = PlayerDataFile.getLastSavedKit(player.getUniqueId());
+        if (kitType == null) { kitType = KitType.KNIGHT; }
+        setKit(player.getUniqueId(), kitType);
+
+
         players.add(player.getUniqueId());
         player.teleport(this.spawn);
         player.setHealth(player.getMaxHealth());
@@ -113,7 +117,8 @@ public class Arena {
         Team lowest = (Team) count.values().toArray()[0];
         setTeam(player, lowest);
 
-        if (state == GameState.RECRUITING && players.size() >= ConfigManager.getRequiredPlayers()) {
+        //if (state == GameState.RECRUITING && players.size() >= ConfigManager.getRequiredPlayers() ) {
+        if (state == GameState.RECRUITING && players.size() % 2 == 0 || players.size() >= ConfigManager.getRequiredPlayers()) {
             countdown.start();
         }
     }
