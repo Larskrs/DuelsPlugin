@@ -40,7 +40,6 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <outputDirectory>C:\Users\Lars Kristian\OneDrive - planbit.no\Skrivebord\Plugin Test Server\plugins</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -71,11 +70,6 @@
             <artifactId>spigot-api</artifactId>
             <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
