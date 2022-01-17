@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 public class CaptureTheFlag extends Game {
 
     private HashMap<Team, Integer> points;
+    private HashMap<Team, UUID> flagHolder;
     private Duels duels;
 
     public CaptureTheFlag(Duels duels, Arena arena) {
@@ -59,6 +60,7 @@ public class CaptureTheFlag extends Game {
         arena.sendMessage(ChatColor.GOLD + "[GAME] " +ChatColor.GREEN + "+1 POINT for " + team.getDisplay() + ChatColor.GREEN + "! ");
         points.replace(team, teamPoints);
     }
+    
 
     @EventHandler
     public void onPlayerKill(PlayerDeathEvent e) {
