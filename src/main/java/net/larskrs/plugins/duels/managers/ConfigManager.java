@@ -58,4 +58,10 @@ public class ConfigManager {
          (float) config.getDouble(configLocation + ".pitch")
         );
     }
- }
+    public static String getGameType (int id) {
+        return config.getString("arenas." + id + ".options.game-type");
+    }
+    public static int getGamePointsToWin (int id) {
+        return config.getInt("arenas." + id + ".options.points-to-win");
+    }
+}

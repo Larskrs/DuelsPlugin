@@ -26,21 +26,6 @@ public class Deathmatch extends Game {
         this.duels = duels;
         points = new HashMap<>();
 
-        arena.setState(GameState.LIVE);
-        arena.sendMessage(ChatColor.GREEN + "Game has started! ");
-        arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
-        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + duels.getConfig().getInt("arena." + arena.getId() + ".options.deathmatch-kills-to-win") + " kills for your team!");
-
-        onStart();
-
-        for (UUID uuid : arena.getPlayers()) {
-            Player p = Bukkit.getPlayer(uuid);
-            arena.getKits().get(uuid).onStart(p);
-            p.closeInventory();
-            p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
-
-        }
-
         for (Team t : Team.values()) {
             points.put(t, 0);
 
@@ -50,7 +35,18 @@ public class Deathmatch extends Game {
 
     @Override
     public void onStart() {
+        arena.setState(GameState.LIVE);
+        arena.sendMessage(ChatColor.GREEN + "Game has started! ");
+        arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
+        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + duels.getConfig().getInt("arena." + arena.getId() + ".options.deathmatch-kills-to-win") + " kills for your team!");
 
+        for (UUID uuid : arena.getPlayers()) {
+            Player p = Bukkit.getPlayer(uuid);
+            arena.getKits().get(uuid).onStart(p);
+            p.closeInventory();
+            p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
+
+        }
     }
 
     public void addPoint(Team team) {

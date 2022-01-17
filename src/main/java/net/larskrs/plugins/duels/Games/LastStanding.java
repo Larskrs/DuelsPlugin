@@ -26,12 +26,15 @@ public class LastStanding extends Game {
         this.duels = duels;
         points = new HashMap<>();
 
+    }
+
+
+    @Override
+    public void onStart() {
         arena.setState(GameState.LIVE);
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[L<ST ST>NDING] ");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Kill the other team! Your team shall remain!");
-
-        onStart();
 
         for (UUID uuid : arena.getPlayers()) {
             Player p = Bukkit.getPlayer(uuid);
@@ -47,15 +50,9 @@ public class LastStanding extends Game {
         }
     }
 
-
-    @Override
-    public void onStart() {
-
-    }
-
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
-        if (teamPoints <= arena.getPlayers().size()) {
+        if (teamPoints >= arena.getPlayers().size()) {
             arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
             arena.reset(true);
         }

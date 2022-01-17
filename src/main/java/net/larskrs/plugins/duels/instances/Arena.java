@@ -39,8 +39,6 @@ public class Arena {
 
     public Arena(Duels duels, int id, Location spawn) {
         this.duels = duels;
-        this.options = loadOptions();
-        setGame();
         this.id = id;
         this.spawn = spawn;
         ScoreboardManager sm = Bukkit.getScoreboardManager();
@@ -50,19 +48,22 @@ public class Arena {
         this.teams = new HashMap<>();
         this.countdown = new Countdown(duels, this);
         this.kits = new HashMap<>();
-    }
 
-    private void setGame() {
-        if (options.GameType == "DEATHMATCH") {
+        if (ConfigManager.getGameType(id) == "DEATHMATCH") {
             this.game = new Deathmatch(duels, this);
-        } else if (options.GameType == "LASTSTANDING") {
+        } else if (ConfigManager.getGameType(id) == "LASTSTANDING") {
+            this.game = new LastStanding(duels, this);
+        } else {
             this.game = new LastStanding(duels, this);
         }
     }
+
     private ArenaOptions loadOptions() {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "loading... arena-options");
         ArenaOptions o = new ArenaOptions();
         o.GameType = duels.getConfig().getString("arenas." + getId() + ".options.game-type");
         o.winAmount = duels.getConfig().getInt("arenas." + getId() + ".options.points-to-win");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "arena info: " + o.GameType + " " + o.winAmount);
 
         return o;
     }
@@ -98,7 +99,12 @@ public class Arena {
             countdown.cancel();
             countdown = new Countdown(duels, this);
             game.unregister();
-            setGame();
+
+            if (ConfigManager.getGameType(id) == "DEATHMATCH") {
+                this.game = new Deathmatch(duels, this);
+            } else if (ConfigManager.getGameType(id) == "LASTSTANDING") {
+                this.game = new LastStanding(duels, this);
+            }
         }
 
     /* Tools */

@@ -25,19 +25,7 @@ public abstract class Game implements Listener {
     }
 
     public void start() {
-        arena.setState(GameState.LIVE);
-        arena.sendMessage(ChatColor.GREEN + "Game has started! ");
-        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Kill the other team!");
-
         onStart();
-
-        for (UUID uuid : arena.getPlayers()) {
-            Player p = Bukkit.getPlayer(uuid);
-            arena.getKits().get(uuid).onStart(p);
-            p.closeInventory();
-                p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
-
-        }
     }
 
     public abstract void onStart();
