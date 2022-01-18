@@ -51,7 +51,7 @@ public class DuelCommand implements CommandExecutor {
                         p.sendMessage(ChatColor.RED + "You can not use this while playing!");
                     }
                 } else {
-                    p.sendMessage(ChatColor.RED + "You are not in a match!");
+                    new KitGUI(a , p);
                 }
             } else if (args.length == 1 && args[0].equalsIgnoreCase("leave")) {
                 if (duels.getArenaManager().getArena(p) != null) {

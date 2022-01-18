@@ -5,4 +5,7 @@ api-version: 1.18
 description: Duels plugin
 commands:
   duel:
-    description: Main command for dueling other players.
+permissions:
+  simpleduels.bypass.build:
+    description: bypass anti block break system.
+    default: op

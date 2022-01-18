@@ -59,7 +59,7 @@ public class LastStanding extends Game {
     public void onCustomRespawn(Player hurt, Player killer) {
         if (arena.getPlayers().contains(hurt.getUniqueId()) && arena.getPlayers().contains(killer.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
             // Both players were in the live match.
-            arena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + hurt.getName() + " was killed by " + killer.getName() + "!");
+            arena.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + hurt.getName() + " was killed by " + killer.getName() + "!");
             addPoint(arena.getTeam(killer));
 
 

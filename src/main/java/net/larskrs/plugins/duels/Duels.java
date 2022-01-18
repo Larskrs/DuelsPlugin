@@ -1,5 +1,6 @@
 package net.larskrs.plugins.duels;
 
+import com.sun.org.apache.xerces.internal.impl.xs.identity.XPathMatcher;
 import net.larskrs.plugins.duels.Files.KitsFile;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.commands.DuelCommand;
@@ -7,9 +8,10 @@ import net.larskrs.plugins.duels.listener.ConnectListener;
 import net.larskrs.plugins.duels.listener.GameListener;
 import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
+import net.larskrs.plugins.duels.tools.XEntityType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Duels extends JavaPlugin {

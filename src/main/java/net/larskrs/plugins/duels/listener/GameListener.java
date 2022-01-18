@@ -1,21 +1,25 @@
 package net.larskrs.plugins.duels.listener;
 
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.GUI.KitGUI;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
+import net.larskrs.plugins.duels.tools.XEntityType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -29,6 +33,7 @@ public class GameListener implements Listener {
     public GameListener(Duels duels) {
         this.duels = duels;
     }
+
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         if (duels.getArenaManager().getArena(e.getPlayer()) != null) {
@@ -37,66 +42,108 @@ public class GameListener implements Listener {
             Arena a = Duels.getInstance().getArenaManager().getArena(p);
             e.setRespawnLocation(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
             a.getKits().get(p.getUniqueId()).onStart(p);
-        }
-        else {
+        } else {
 
             e.setRespawnLocation(ConfigManager.getLobbySpawnLocation());
         }
     }
+
     @EventHandler
     public void onPlayerHunger(FoodLevelChangeEvent e) {
         if (e.getEntity() instanceof Player) {
-            Arena a = duels.getArenaManager().getArena( (Player) e.getEntity());
+            Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
             if (a != null) {
                 if (a.getState() != GameState.LIVE) {
-                e.setCancelled(true);
+                    e.setCancelled(true);
                 }
             } else {
                 e.setCancelled(true);
             }
         }
     }
+
     @EventHandler
     public void onPlayerDamage(EntityDamageByEntityEvent e) {
 
         if (e.getEntity() instanceof Player) {
-            Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
-                        Player p = (Player) e.getEntity();
 
-                        if (a == null ) {
-                            e.setCancelled(true);
-                            return;
-                        }
+        Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
+        Player p = (Player) e.getEntity();
+        Player killer = null;
+        Boolean isSuicide = false;
 
-                if (a.getState() != GameState.LIVE) {
-                    e.setCancelled(true);
-                }
-                if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
-                    e.setCancelled(true);
-                    // custom respawn logic.
+        if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+            p.teleport(ConfigManager.getLobbySpawnLocation());
+            e.setCancelled(true);
+            return;
+        }
+        if (e.getCause().equals(EntityDamageEvent.DamageCause.SUICIDE) || e.getCause().equals(EntityDamageEvent.DamageCause.FALL) || e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {isSuicide = true; }
 
-                    if (duels.getArenaManager().getArena(p) != null) {
-                        if (e.getDamager() instanceof Player)
-                        // player is in arena.
-                        p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
-                        a.getKits().get(p.getUniqueId()).onStart(p);
-                        p.setHealth(p.getMaxHealth());
-
-                            a.getGame().onCustomRespawn(p,(Player) e.getDamager());
-                            a.getGame().onNewRoundBegin();
-                    }
-                    else {
-
-                        p.teleport(ConfigManager.getLobbySpawnLocation());
-                        p.setHealth(p.getMaxHealth());
-                    }
-
-                }
-            } else {
-                e.setCancelled(true);
+        if (e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg || e.getDamager() instanceof Arrow || e.getDamager() instanceof Trident || e.getDamager() instanceof SpectralArrow || e.getDamager() instanceof EnderPearl) {
+            Projectile pj = (Projectile) e.getDamager();
+            if (pj.getShooter() instanceof Player) {
+                killer = (Player) pj.getShooter();
             }
+        } else if (e.getDamager() instanceof Player) {
+            killer = (Player) e.getDamager();
+        } else {
+            p.sendMessage("i am unsure..");
+            return;
         }
 
+        if (a == null) {
+            e.setCancelled(true);
+            return;
+        }
+
+        if (a.getState() != GameState.LIVE) {
+            e.setCancelled(true);
+        }
+        if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
+            e.setCancelled(true);
+            // custom respawn logic.
+
+            if (duels.getArenaManager().getArena(p) != null) {
+                    // player is in arena.
+
+                if (isSuicide) {
+                    p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
+                    a.getKits().get(p.getUniqueId()).onStart(p);
+                    p.setHealth(p.getMaxHealth());
+                    e.setCancelled(true);
+                } else {
+
+                p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
+                a.getKits().get(p.getUniqueId()).onStart(p);
+                p.setHealth(p.getMaxHealth());
+
+                a.getGame().onCustomRespawn(p, killer);
+                }
+
+            } else {
+
+                p.teleport(ConfigManager.getLobbySpawnLocation());
+                p.setHealth(p.getMaxHealth());
+            }
+        e.setCancelled(true);
+        }
+        }
+
+    }
+
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
+        if (!e.getPlayer().hasPermission("simpleduels.bypass.build") || duels.getArenaManager().getArena(e.getPlayer()) != null) {
+            e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void onBlockBreak(BlockPlaceEvent e) {
+        if (!e.getPlayer().hasPermission("simpleduels.bypass.build") || duels.getArenaManager().getArena(e.getPlayer()) != null) {
+            e.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
@@ -111,6 +158,9 @@ public class GameListener implements Listener {
                 if (a.getTeam(p) == team) {
                     p.sendMessage(ChatColor.RED + "You are already on this team!");
                 } else {
+                    if (a.getTeamCount(team) == 1) {
+                        p.sendMessage(ChatColor.RED + "You can not leave the team, it will be empty!");
+                    }
                     a.setTeam(p, team);
                     new TeamGUI(a, p);
                 }
@@ -123,18 +173,23 @@ public class GameListener implements Listener {
             Player p = (Player) e.getWhoClicked();
             Arena a = Duels.getInstance().getArenaManager().getArena(p);
 
-            if (a != null) {
-                KitType currentKit = a.getKit(p);
+
+                KitType currentKit = PlayerDataFile.getLastSavedKit(p.getUniqueId());
                 if (currentKit != null && currentKit == type) {
                     p.sendMessage(ChatColor.RED + "You already have this kit equipped.");
                 } else {
-                    p.sendMessage(ChatColor.YELLOW + "You have " + ChatColor.GREEN + "equipped " + ChatColor.YELLOW + "the " + type.getDisplay() + " kit!");
-                    a.setKit(p.getUniqueId(), type);
-
+                    if (a != null) {
+                        p.sendMessage(ChatColor.YELLOW + "You have " + ChatColor.GREEN + "equipped " + ChatColor.YELLOW + "the " + type.getDisplay() + " kit!");
+                        a.setKit(p.getUniqueId(), type);
+                    } else {
+                        PlayerDataFile.getConfig().set(Bukkit.getPlayer(p.getUniqueId()).getName() + ".kit", type.name());
+                        PlayerDataFile.saveFile();
+                        p.sendMessage(ChatColor.YELLOW + "You have " + ChatColor.GREEN + "equipped " + ChatColor.YELLOW + "the " + type.getDisplay() + " kit!");
+                    }
                 }
                 p.closeInventory();
 
-            }
+
             e.setCancelled(true);
         }
     }

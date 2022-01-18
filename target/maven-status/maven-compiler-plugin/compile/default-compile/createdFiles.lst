@@ -19,5 +19,6 @@ net\larskrs\plugins\duels\Files\KitsFile.class
 net\larskrs\plugins\duels\enums\GameState.class
 net\larskrs\plugins\duels\commands\DuelCommand.class
 net\larskrs\plugins\duels\instances\ArenaOptions.class
+net\larskrs\plugins\duels\tools\XEntityType.class
 net\larskrs\plugins\duels\managers\ConfigManager.class
 net\larskrs\plugins\duels\Kits\PearlerKit.class

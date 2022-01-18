@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -29,7 +30,7 @@ public class KitGUI {
             if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) != null) {
                 if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) == type) {
                     isMeta.addEnchant(Enchantment.DURABILITY, 1, true);
-                    islore.clear();
+                    isMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
                     islore.add(ChatColor.YELLOW + "(Equipped)");
                 }
             }
