@@ -23,7 +23,7 @@ public class ArenaManager {
         for (String s : config.getConfigurationSection("arenas").getKeys(false)) {
             arenas.add(new Arena(duels, Integer.parseInt(s), ConfigManager.getArenaSpawn(Integer.parseInt(s))));
         }
-        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "loaded: " + arenas.size() + " arenas.");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GRAY + "loaded: " + arenas.size() + " arenas.");
     }
 
     public List<Arena> getArenas () { return arenas; }

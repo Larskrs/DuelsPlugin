@@ -24,11 +24,22 @@ public class Deathmatch extends Game {
     public Deathmatch(Duels duels, Arena arena) {
         super(duels, arena);
         this.duels = duels;
-        points = new HashMap<>();
+        this.points = new HashMap<>();
 
         for (Team t : Team.values()) {
             points.put(t, 0);
 
+        }
+    }
+
+    @Override
+    public void onNewRoundBegin() {
+        for (UUID uuid : arena.getPlayers()) {
+            Player p = Bukkit.getPlayer(uuid);
+            p.teleport(ConfigManager.getTeamSpawn(arena.getId(),arena.getTeam(p)));
+            p.setHealth(p.getMaxHealth());
+            p.setFoodLevel(20);
+            p.setArrowsInBody(0);
         }
     }
 
@@ -40,23 +51,28 @@ public class Deathmatch extends Game {
         arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + duels.getConfig().getInt("arena." + arena.getId() + ".options.deathmatch-kills-to-win") + " kills for your team!");
 
-        for (UUID uuid : arena.getPlayers()) {
-            Player p = Bukkit.getPlayer(uuid);
-            arena.getKits().get(uuid).onStart(p);
-            p.closeInventory();
-            p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
+    }
+
+    @Override
+    public void onCustomRespawn(Player hurt, Player killer) {
+        if (arena.getPlayers().contains(hurt.getUniqueId()) && arena.getPlayers().contains(killer.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
+            // Both players were in the live match.
+            arena.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + hurt.getName() + " was killed by " + killer.getName() + "!");
+            arena.sendMessage(ChatColor.GOLD + "" + arena.getTeam(killer).getDisplay() + ChatColor.YELLOW + "'s points (" + ChatColor.AQUA + (this.points.get(arena.getTeam(killer)) + 1) + ChatColor.YELLOW + "/" + ChatColor.AQUA + ConfigManager.getGamePointsToWin(arena.getId()) + ChatColor.YELLOW + ")" + "!");
+            addPoint(arena.getTeam(killer));
+
 
         }
     }
 
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
-        if (teamPoints >= arena.getOptions().winAmount) {
+        if (teamPoints >= ConfigManager.getGamePointsToWin(arena.getId())) {
             arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
             arena.reset(true);
         }
 
-        arena.sendMessage(ChatColor.GOLD + "[GAME] " +ChatColor.GREEN + "+1 POINT for " + team.getDisplay() + ChatColor.GREEN + "! ");
+
         points.replace(team, teamPoints);
     }
 
@@ -67,14 +83,11 @@ public class Deathmatch extends Game {
             Player killer = e.getEntity().getKiller();
             Player p = e.getEntity();
 
-            if (duels.getArenaManager().getArena(p) != null && duels.getArenaManager().getArena(killer) != null) {
-                // The two players are both in arena.
-                Arena pArena = duels.getArenaManager().getArena(p);
-                Arena killerArena = duels.getArenaManager().getArena(killer);
-                if (killerArena == pArena && killerArena.getState().equals(GameState.LIVE)) {
+
+            if (arena.getPlayers().contains(p.getUniqueId()) && arena.getPlayers().contains(killer.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
                     // Both players were in the live match.
-                    killerArena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + p.getName() + " was killed by " + killer.getName() + "!");
-                    addPoint(pArena.getTeam(killer));
+                    arena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + p.getName() + " was killed by " + killer.getName() + "!");
+                    addPoint(arena.getTeam(killer));
 
                     e.getDrops().clear();
                     e.getDrops().add(new ItemStack(Material.GOLDEN_APPLE));
@@ -87,4 +100,4 @@ public class Deathmatch extends Game {
         }
 
     }
-}
+

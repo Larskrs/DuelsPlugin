@@ -8,6 +8,7 @@ import net.larskrs.plugins.duels.Games.Game;
 import net.larskrs.plugins.duels.Games.LastStanding;
 import net.larskrs.plugins.duels.Kits.ArcherKit;
 import net.larskrs.plugins.duels.Kits.KnightKit;
+import net.larskrs.plugins.duels.Kits.PearlerKit;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.managers.ConfigManager;
@@ -48,12 +49,10 @@ public class Arena {
         this.teams = new HashMap<>();
         this.countdown = new Countdown(duels, this);
         this.kits = new HashMap<>();
-
-        if (ConfigManager.getGameType(id) == "DEATHMATCH") {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ID: " + id +  "] " + ConfigManager.getGameType(id) + ChatColor.RED + "" + (ConfigManager.getGameType(id).contains("DEATHMATCH")));
+        if (ConfigManager.getGameType(id).contains("DEATHMATCH")) {
             this.game = new Deathmatch(duels, this);
-        } else if (ConfigManager.getGameType(id) == "LASTSTANDING") {
-            this.game = new LastStanding(duels, this);
-        } else {
+        } else if (ConfigManager.getGameType(id).contains("LASTSTANDING")) {
             this.game = new LastStanding(duels, this);
         }
     }
@@ -89,6 +88,9 @@ public class Arena {
                     Player p = Bukkit.getPlayer(uuid);
                     p.teleport(loc);
                     removeKit(p.getUniqueId());
+                    p.setHealth(p.getMaxHealth());
+                    p.setFoodLevel(20);
+                    p.setArrowsInBody(0);
                 }
                 players.clear();
                 teams.clear();
@@ -100,9 +102,9 @@ public class Arena {
             countdown = new Countdown(duels, this);
             game.unregister();
 
-            if (ConfigManager.getGameType(id) == "DEATHMATCH") {
+            if (ConfigManager.getGameType(id).contains("DEATHMATCH")) {
                 this.game = new Deathmatch(duels, this);
-            } else if (ConfigManager.getGameType(id) == "LASTSTANDING") {
+            } else if (ConfigManager.getGameType(id).contains("LASTSTANDING")) {
                 this.game = new LastStanding(duels, this);
             }
         }
@@ -197,7 +199,10 @@ public class Arena {
             kits.put(uuid, new KnightKit(type, uuid));
         } else if (type == KitType.ARCHER){
             kits.put(uuid, new ArcherKit(type, uuid));
+        } else if (type == KitType.PEARLER) {
+            kits.put(uuid, new PearlerKit(type, uuid));
         }
+
         PlayerDataFile.getConfig().set(Bukkit.getPlayer(uuid).getName() + ".kit", type.name());
         PlayerDataFile.saveFile();
     }

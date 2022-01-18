@@ -21,7 +21,7 @@ public class PearlerKit extends Kit {
         p.getInventory().setBoots(new ItemStack(Material.LEATHER_BOOTS));
 
         p.getInventory().setItem(0, new ItemStack(Material.STONE_SWORD));
-        p.getInventory().setItem(1, new ItemStack(Material.ENDER_PEARL), 4);
+        p.getInventory().setItem(1, new ItemStack(Material.ENDER_PEARL, 4));
 
     }
 }

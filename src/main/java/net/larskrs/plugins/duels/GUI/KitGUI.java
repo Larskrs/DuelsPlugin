@@ -25,13 +25,15 @@ public class KitGUI {
             isMeta.setDisplayName(type.getDisplay());
 
             ArrayList<String> islore = new ArrayList<>();
-            islore.add(type.getDescription());
+
             if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) != null) {
                 if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) == type) {
                     isMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+                    islore.clear();
                     islore.add(ChatColor.YELLOW + "(Equipped)");
                 }
             }
+            islore.add(type.getDescription());
             isMeta.setLocalizedName(type.name());
             isMeta.setLore(islore);
             is.setItemMeta(isMeta);

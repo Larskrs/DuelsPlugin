@@ -22,7 +22,7 @@ public final class Duels extends JavaPlugin {
         instance = this;
 
         Bukkit.getConsoleSender().sendMessage("§6§m------------ §6Simple Duels §6§m------------");
-        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "developed by: Larskrs");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "developed by: Larskrs");
         ConfigManager.setupConfig(this); // STEP 1
         arenaManager = new ArenaManager(this); // STEP 2
 

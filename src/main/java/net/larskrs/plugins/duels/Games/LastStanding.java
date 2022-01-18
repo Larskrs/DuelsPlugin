@@ -24,7 +24,12 @@ public class LastStanding extends Game {
     public LastStanding(Duels duels, Arena arena) {
         super(duels, arena);
         this.duels = duels;
-        points = new HashMap<>();
+        this.points = new HashMap<>();
+
+    }
+
+    @Override
+    public void onNewRoundBegin() {
 
     }
 
@@ -50,9 +55,20 @@ public class LastStanding extends Game {
         }
     }
 
+    @Override
+    public void onCustomRespawn(Player hurt, Player killer) {
+        if (arena.getPlayers().contains(hurt.getUniqueId()) && arena.getPlayers().contains(killer.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
+            // Both players were in the live match.
+            arena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + hurt.getName() + " was killed by " + killer.getName() + "!");
+            addPoint(arena.getTeam(killer));
+
+
+        }
+    }
+
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
-        if (teamPoints >= arena.getPlayers().size()) {
+        if (teamPoints >= arena.getPlayers().size() - arena.getTeamCount(team)) {
             arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
             arena.reset(true);
         }
@@ -68,14 +84,10 @@ public class LastStanding extends Game {
             Player killer = e.getEntity().getKiller();
             Player p = e.getEntity();
 
-            if (duels.getArenaManager().getArena(p) != null && duels.getArenaManager().getArena(killer) != null) {
-                // The two players are both in arena.
-                Arena pArena = duels.getArenaManager().getArena(p);
-                Arena killerArena = duels.getArenaManager().getArena(killer);
-                if (killerArena == pArena && killerArena.getState().equals(GameState.LIVE)) {
+                if (arena.getPlayers().contains(p.getUniqueId()) && arena.getPlayers().contains(killer.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
                     // Both players were in the live match.
-                    killerArena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + p.getName() + " was killed by " + killer.getName() + "!");
-                    addPoint(pArena.getTeam(killer));
+                    arena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + p.getName() + " was killed by " + killer.getName() + "!");
+                    addPoint(arena.getTeam(killer));
 
                     e.getDrops().clear();
                     e.getDrops().add(new ItemStack(Material.GOLDEN_APPLE));
@@ -87,5 +99,5 @@ public class LastStanding extends Game {
 
         }
 
+
     }
-}

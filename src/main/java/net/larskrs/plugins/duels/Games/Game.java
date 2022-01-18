@@ -21,16 +21,30 @@ public abstract class Game implements Listener {
 
     public Game(Duels duels, Arena arena) {
         this.arena = arena;
+
         Bukkit.getPluginManager().registerEvents(this, duels);
     }
 
     public void start() {
+
+
+        for (UUID uuid : arena.getPlayers()) {
+            Player p = Bukkit.getPlayer(uuid);
+            arena.getKits().get(uuid).onStart(p);
+            p.closeInventory();
+            p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
+
+        }
+
+
+
         onStart();
     }
-
+    public abstract void onNewRoundBegin();
     public abstract void onStart();
 
     public void unregister() {
         HandlerList.unregisterAll(this);
     }
+    public abstract void onCustomRespawn(Player hurt, Player killer);
 }

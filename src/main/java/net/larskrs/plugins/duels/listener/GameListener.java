@@ -12,15 +12,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.projectiles.ProjectileSource;
 
 public class GameListener implements Listener {
 
@@ -29,21 +29,19 @@ public class GameListener implements Listener {
     public GameListener(Duels duels) {
         this.duels = duels;
     }
-
-
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         if (duels.getArenaManager().getArena(e.getPlayer()) != null) {
             // player is in arena.
             Player p = (Player) e.getPlayer();
             Arena a = Duels.getInstance().getArenaManager().getArena(p);
-            e.setRespawnLocation(ConfigManager.getArenaSpawn(duels.getArenaManager().getArena(p).getId()));
+            e.setRespawnLocation(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
             a.getKits().get(p.getUniqueId()).onStart(p);
-                 }
-         else {
+        }
+        else {
 
             e.setRespawnLocation(ConfigManager.getLobbySpawnLocation());
-       }
+        }
     }
     @EventHandler
     public void onPlayerHunger(FoodLevelChangeEvent e) {
@@ -59,18 +57,47 @@ public class GameListener implements Listener {
         }
     }
     @EventHandler
-    public void onPlayerHunger(EntityDamageEvent e) {
+    public void onPlayerDamage(EntityDamageByEntityEvent e) {
+
         if (e.getEntity() instanceof Player) {
             Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
-            if (a != null) {
+                        Player p = (Player) e.getEntity();
+
+                        if (a == null ) {
+                            e.setCancelled(true);
+                            return;
+                        }
+
                 if (a.getState() != GameState.LIVE) {
                     e.setCancelled(true);
+                }
+                if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
+                    e.setCancelled(true);
+                    // custom respawn logic.
+
+                    if (duels.getArenaManager().getArena(p) != null) {
+                        if (e.getDamager() instanceof Player)
+                        // player is in arena.
+                        p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
+                        a.getKits().get(p.getUniqueId()).onStart(p);
+                        p.setHealth(p.getMaxHealth());
+
+                            a.getGame().onCustomRespawn(p,(Player) e.getDamager());
+                            a.getGame().onNewRoundBegin();
+                    }
+                    else {
+
+                        p.teleport(ConfigManager.getLobbySpawnLocation());
+                        p.setHealth(p.getMaxHealth());
+                    }
+
                 }
             } else {
                 e.setCancelled(true);
             }
         }
-    }
+
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
 
