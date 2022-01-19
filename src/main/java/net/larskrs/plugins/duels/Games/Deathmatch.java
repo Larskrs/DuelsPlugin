@@ -6,6 +6,7 @@ import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -49,7 +50,7 @@ public class Deathmatch extends Game {
         arena.setState(GameState.LIVE);
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
-        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + duels.getConfig().getInt("arena." + arena.getId() + ".options.deathmatch-kills-to-win") + " kills for your team!");
+        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + ConfigManager.getGamePointsToWin(arena.getId()) + " kills for your team!");
 
     }
 

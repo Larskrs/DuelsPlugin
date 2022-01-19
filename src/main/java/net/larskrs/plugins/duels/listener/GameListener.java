@@ -2,29 +2,23 @@ package net.larskrs.plugins.duels.listener;
 
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
-import net.larskrs.plugins.duels.GUI.KitGUI;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Arena;
-import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
-import net.larskrs.plugins.duels.tools.XEntityType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.GameMode;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.projectiles.ProjectileSource;
 
 public class GameListener implements Listener {
 
@@ -70,14 +64,13 @@ public class GameListener implements Listener {
         Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
         Player p = (Player) e.getEntity();
         Player killer = null;
-        Boolean isSuicide = false;
 
         if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
             p.teleport(ConfigManager.getLobbySpawnLocation());
+            p.sendMessage("void = death. bruh");
             e.setCancelled(true);
             return;
         }
-        if (e.getCause().equals(EntityDamageEvent.DamageCause.SUICIDE) || e.getCause().equals(EntityDamageEvent.DamageCause.FALL) || e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {isSuicide = true; }
 
         if (e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg || e.getDamager() instanceof Arrow || e.getDamager() instanceof Trident || e.getDamager() instanceof SpectralArrow || e.getDamager() instanceof EnderPearl) {
             Projectile pj = (Projectile) e.getDamager();
@@ -87,7 +80,6 @@ public class GameListener implements Listener {
         } else if (e.getDamager() instanceof Player) {
             killer = (Player) e.getDamager();
         } else {
-            p.sendMessage("i am unsure..");
             return;
         }
 
@@ -104,32 +96,35 @@ public class GameListener implements Listener {
             // custom respawn logic.
 
             if (duels.getArenaManager().getArena(p) != null) {
+
+
                     // player is in arena.
 
-                if (isSuicide) {
-                    p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
-                    a.getKits().get(p.getUniqueId()).onStart(p);
-                    p.setHealth(p.getMaxHealth());
-                    e.setCancelled(true);
-                } else {
+                    if (killer == null || killer == p)  {
+                        p.setGameMode(GameMode.SPECTATOR);
+                        new RespawnCountdown(duels, p, 10).start();
+                        e.setCancelled(true);
 
-                p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
-                a.getKits().get(p.getUniqueId()).onStart(p);
-                p.setHealth(p.getMaxHealth());
+                    } else {
 
-                a.getGame().onCustomRespawn(p, killer);
-                }
+                        a.getGame().onCustomRespawn(p, killer);
+                        new RespawnCountdown(duels, p, 10).start();
+
+                        p.setGameMode(GameMode.SPECTATOR);
+
+                    }
+
 
             } else {
 
                 p.teleport(ConfigManager.getLobbySpawnLocation());
                 p.setHealth(p.getMaxHealth());
             }
-        e.setCancelled(true);
         }
         }
 
     }
+
 
 
     @EventHandler

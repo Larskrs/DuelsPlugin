@@ -15,6 +15,7 @@ import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -134,6 +135,8 @@ public class Arena {
         player.teleport(this.spawn);
         player.setHealth(player.getMaxHealth());
         player.getInventory().clear();
+        player.setFoodLevel(20);
+        player.setGameMode(GameMode.SURVIVAL);
 
         TreeMultimap<Integer, Team> count = TreeMultimap.create();
         for (Team t : Team.values()) {
@@ -158,6 +161,7 @@ public class Arena {
         player.sendTitle("", ""); //Resets the title to instantly hide.
         player.getInventory().clear();
         player.setFoodLevel(20);
+        player.setGameMode(GameMode.SURVIVAL);
 
         if (state == GameState.COUNTDOWN && players.size() < ConfigManager.getRequiredPlayers()) {
             sendMessage(ChatColor.RED + "Not enough players for game to start. :(");
@@ -217,5 +221,15 @@ public class Arena {
     }
     public KitType getKit(Player player) {
         return kits.containsKey(player.getUniqueId()) ? kits.get(player.getUniqueId()).getType() : null;
+    }
+    public void respawnPlayer(UUID uuid) {
+        Player p = Bukkit.getPlayer(uuid);
+        Arena a = duels.getArenaManager().getArena(p);
+
+        p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
+        a.getKits().get(p.getUniqueId()).onStart(p);
+        p.setFoodLevel(20);
+        p.setHealth(p.getMaxHealth());
+        p.setGameMode(GameMode.SURVIVAL);
     }
 }
