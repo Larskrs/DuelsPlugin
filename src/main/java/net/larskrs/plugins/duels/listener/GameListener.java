@@ -59,6 +59,8 @@ public class GameListener implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageByEntityEvent e) {
 
+        // Damage Blackslists
+
         if (e.getEntity() instanceof Player) {
 
         Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
@@ -79,8 +81,6 @@ public class GameListener implements Listener {
             }
         } else if (e.getDamager() instanceof Player) {
             killer = (Player) e.getDamager();
-        } else {
-            return;
         }
 
         if (a == null) {
@@ -91,6 +91,7 @@ public class GameListener implements Listener {
         if (a.getState() != GameState.LIVE) {
             e.setCancelled(true);
         }
+            System.out.println( "can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
         if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
             e.setCancelled(true);
             // custom respawn logic.
@@ -100,7 +101,7 @@ public class GameListener implements Listener {
 
                     // player is in arena.
 
-                    if (killer == null || killer == p)  {
+                    if (killer == null || killer == p || e.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING) || e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK))  {
                         p.setGameMode(GameMode.SPECTATOR);
                         new RespawnCountdown(duels, p, 10).start();
                         e.setCancelled(true);

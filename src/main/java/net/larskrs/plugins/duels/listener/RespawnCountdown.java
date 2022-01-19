@@ -50,7 +50,7 @@ public class RespawnCountdown extends BukkitRunnable {
                 return;
 
         }
-        player.sendTitle(ChatColor.RED + "" + startupTime, ChatColor.GRAY + "respawning...");
+        player.sendTitle(ChatColor.RED + "" + startupTime, ChatColor.GRAY + "respawning...", 0, 20, 10);
         startupTime--;
     }
 }
