@@ -12,6 +12,7 @@ arenas:
     options:
       game-type: 'DEATHMATCH'
       points-to-win: 5
+      name: 'Siege'
     spawn:
       world: 'world'
       x: 65

@@ -125,6 +125,58 @@ public class GameListener implements Listener {
         }
 
     }
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent e) {
+
+        // Damage Blackslists
+
+        if (e.getEntity() instanceof Player) {
+
+            Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
+            Player p = (Player) e.getEntity();
+
+            if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+                p.teleport(ConfigManager.getLobbySpawnLocation());
+                p.sendMessage("void = death. bruh");
+                e.setCancelled(true);
+                return;
+            }
+
+            if (a == null) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if (a.getState() != GameState.LIVE) {
+                e.setCancelled(true);
+            }
+            System.out.println( "can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
+            if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
+                e.setCancelled(true);
+                // custom respawn logic.
+
+                if (duels.getArenaManager().getArena(p) != null) {
+
+
+                    // player is in arena.
+
+                    a.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + p.getName() + " was killed!");
+                        p.setGameMode(GameMode.SPECTATOR);
+                        new RespawnCountdown(duels, p, 10).start();
+                        e.setCancelled(true);
+
+
+
+
+                } else {
+
+                    p.teleport(ConfigManager.getLobbySpawnLocation());
+                    p.setHealth(p.getMaxHealth());
+                }
+            }
+        }
+
+    }
 
 
 
