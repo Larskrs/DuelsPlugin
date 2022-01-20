@@ -1,24 +1,30 @@
 package net.larskrs.plugins.duels.listener;
 
+import com.cryptomorin.xseries.XMaterial;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 public class GameListener implements Listener {
 
@@ -57,6 +63,16 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onSignClick(PlayerInteractEvent e) {
+        if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock() && e.getClickedBlock().getType().equals(XMaterial.OAK_WALL_SIGN.parseMaterial())) {
+            Arena a = duels.getArenaManager().getArena(e.getClickedBlock().getLocation());
+            if (a != null) {
+                Bukkit.dispatchCommand(e.getPlayer(), "duel join " + a.getId());
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerDamage(EntityDamageByEntityEvent e) {
 
         // Damage Blackslists
@@ -66,6 +82,8 @@ public class GameListener implements Listener {
         Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
         Player p = (Player) e.getEntity();
         Player killer = null;
+
+
 
         if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
             p.teleport(ConfigManager.getLobbySpawnLocation());
@@ -91,6 +109,12 @@ public class GameListener implements Listener {
         if (a.getState() != GameState.LIVE) {
             e.setCancelled(true);
         }
+
+        if (a.getTeam(p) == a.getTeam(killer)) {
+            e.setCancelled(true);
+            return;
+        }
+
             System.out.println( "can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
         if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
             e.setCancelled(true);
@@ -189,6 +213,18 @@ public class GameListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockPlaceEvent e) {
         if (!e.getPlayer().hasPermission("simpleduels.bypass.build") || duels.getArenaManager().getArena(e.getPlayer()) != null) {
+            e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void hangingBreakByEntityEvent(HangingBreakByEntityEvent e) {
+        Player p = null;
+        if (e.getRemover() instanceof Player) {
+            p =  (Player) e.getRemover();
+            if (!p.getGameMode().equals(GameMode.CREATIVE)) {
+                e.setCancelled(true);
+            }
+        } else {
             e.setCancelled(true);
         }
     }

@@ -32,14 +32,13 @@ public class RespawnCountdown extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (arena != null) {
+        if (arena.getState() != null || !arena.getState().equals(GameState.RECRUITING)) {
             if (startupTime == 0) {
-                this.cancel();
                 arena.respawnPlayer(player.getUniqueId());
+                this.cancel();
             }
         } else {
 
-                this.cancel();
                 player.teleport(ConfigManager.getLobbySpawnLocation());
                 player.setGameMode(GameMode.SURVIVAL);
                 player.setHealth(player.getMaxHealth());
@@ -47,6 +46,7 @@ public class RespawnCountdown extends BukkitRunnable {
                 player.sendTitle("", ""); //Resets the title to instantly hide.
                 player.getInventory().clear();
                 player.setFoodLevel(20);
+                this.cancel();
                 return;
 
         }

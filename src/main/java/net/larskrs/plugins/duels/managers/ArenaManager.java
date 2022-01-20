@@ -4,6 +4,7 @@ import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.instances.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -21,7 +22,7 @@ public class ArenaManager {
         arenas  = new ArrayList<>();
         FileConfiguration config = duels.getConfig();
         for (String s : config.getConfigurationSection("arenas").getKeys(false)) {
-            arenas.add(new Arena(duels, Integer.parseInt(s), ConfigManager.getArenaSpawn(Integer.parseInt(s))));
+            arenas.add(new Arena(duels, Integer.parseInt(s), ConfigManager.getArenaSpawn(Integer.parseInt(s)), ConfigManager.getLocation("arenas." + Integer.parseInt(s) + ".sign")));
         }
         Bukkit.getConsoleSender().sendMessage(ChatColor.GRAY + "loaded: " + arenas.size() + " arenas.");
     }
@@ -39,6 +40,14 @@ public class ArenaManager {
         for (Arena arena : arenas) {
             if (arena.getId() == id) {
                 return arena;
+            }
+        }
+        return null;
+    }
+    public Arena getArena(Location sign) {
+        for ( Arena a: arenas) {
+            if (a.getSignLocation().equals(sign)) {
+                return a;
             }
         }
         return null;

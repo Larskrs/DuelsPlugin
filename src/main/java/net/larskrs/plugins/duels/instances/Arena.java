@@ -11,12 +11,14 @@ import net.larskrs.plugins.duels.Kits.KnightKit;
 import net.larskrs.plugins.duels.Kits.PearlerKit;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.enums.KitType;
+import net.larskrs.plugins.duels.listener.RespawnCountdown;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -28,7 +30,7 @@ public class Arena {
 
     private Duels duels;
     private int id;
-    private Location spawn;
+    private Location spawn, sign;
 
     private List<UUID> players;
     private HashMap<UUID, Kit> kits;
@@ -39,13 +41,14 @@ public class Arena {
     private Scoreboard scoreboard;
     private ArenaOptions options;
 
-    public Arena(Duels duels, int id, Location spawn) {
+    public Arena(Duels duels, int id, Location spawn, Location sign) {
         this.duels = duels;
         this.id = id;
         this.spawn = spawn;
+        this.sign = sign;
         ScoreboardManager sm = Bukkit.getScoreboardManager();
         scoreboard = sm.getNewScoreboard();
-        this.state = GameState.RECRUITING;
+        setState(GameState.RECRUITING);
         this.players = new ArrayList<>();
         this.teams = new HashMap<>();
         this.countdown = new Countdown(duels, this);
@@ -83,6 +86,7 @@ public class Arena {
         }
         public void reset(boolean kickPlayers) {
 
+            setState(GameState.RECRUITING);
             if (kickPlayers) {
                 Location loc = ConfigManager.getLobbySpawnLocation();
                 for (UUID uuid : players) {
@@ -98,7 +102,6 @@ public class Arena {
             }
             kits.clear();
             sendTitle("", ""); //Resets the title to instantly hide.
-            state = GameState.RECRUITING;
             countdown.cancel();
             countdown = new Countdown(duels, this);
             game.unregister();
@@ -123,6 +126,14 @@ public class Arena {
             Bukkit.getPlayer(uuid).sendTitle(title, subtitle);
         }
     }
+    public void updateSign(String line1, String line2, String line3, String line4) {
+        Sign signBlock = (Sign) sign.getBlock().getState();
+        signBlock.setLine(0, line1);
+        signBlock.setLine(1, line2);
+        signBlock.setLine(2, line3);
+        signBlock.setLine(3, line4);
+        signBlock.update();
+    }
 
 /* Player */
     public void addPlayer(Player player) {
@@ -146,12 +157,16 @@ public class Arena {
         Team lowest = (Team) count.values().toArray()[0];
         setTeam(player, lowest);
 
+        updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(),  "Players: " + players.size());
+
         //if (state == GameState.RECRUITING && players.size() >= ConfigManager.getRequiredPlayers() ) {
         if (state == GameState.RECRUITING && players.size() % 2 == 0 || players.size() >= ConfigManager.getRequiredPlayers()) {
             countdown.start();
         }
     }
     public void removePlayer(Player player) {
+
+
         players.remove(player.getUniqueId());
         player.teleport(ConfigManager.getLobbySpawnLocation());
         player.setHealth(player.getMaxHealth());
@@ -170,9 +185,17 @@ public class Arena {
         if (state == GameState.LIVE && players.size() < ConfigManager.getRequiredPlayers()) {
             sendMessage(ChatColor.RED + "The game has ended as too many players have left. :(");
             this.reset(true);
+            return;
+        }
+        if (state == GameState.LIVE) {
+            updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(), "Players: " + players.size());
         }
     }
-    public void setState (GameState state) { this.state = state; }
+    public void setState (GameState state) {
+        this.state = state;
+            // Update Arena Sign
+        updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(), state == GameState.LIVE ? "Players: " + players.size() : "");
+    }
     public void setTeam (Player player, Team team) {
         removeTeam(player);
         teams.put(player.getUniqueId(), team);
@@ -223,6 +246,7 @@ public class Arena {
         return kits.containsKey(player.getUniqueId()) ? kits.get(player.getUniqueId()).getType() : null;
     }
     public void respawnPlayer(UUID uuid) {
+
         Player p = Bukkit.getPlayer(uuid);
         Arena a = duels.getArenaManager().getArena(p);
 
@@ -231,5 +255,9 @@ public class Arena {
         p.setFoodLevel(20);
         p.setHealth(p.getMaxHealth());
         p.setGameMode(GameMode.SURVIVAL);
+    }
+
+    public Location getSignLocation() {
+        return sign;
     }
 }
