@@ -3,6 +3,7 @@ package net.larskrs.plugins.duels.Kits;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Kit;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,13 +17,18 @@ public class ArcherKit extends Kit {
     @Override
     public void onStart(Player p) {
         p.getInventory().setHelmet(new ItemStack(Material.LEATHER_HELMET));
-        p.getInventory().setChestplate(new ItemStack(Material.IRON_CHESTPLATE));
+        p.getInventory().setChestplate(new ItemStack(Material.CHAINMAIL_CHESTPLATE));
         p.getInventory().setLeggings(new ItemStack(Material.IRON_LEGGINGS));
-        p.getInventory().setBoots(new ItemStack(Material.LEATHER_BOOTS));
+        p.getInventory().setBoots(new ItemStack(Material.CHAINMAIL_BOOTS));
 
-        p.getInventory().setItem(0, new ItemStack(Material.STONE_SWORD));
-        p.getInventory().setItem(1, new ItemStack(Material.BOW));
-        p.getInventory().setItem(8, new ItemStack(Material.ARROW, 20));
+        ItemStack bow = new ItemStack(Material.BOW);
+        bow.addEnchantment(Enchantment.ARROW_DAMAGE, 3);
+        ItemStack crossbow = new ItemStack(Material.CROSSBOW);
+        crossbow.addEnchantment(Enchantment.MULTISHOT, 1);
+        p.getInventory().setItem(0, bow);
+        p.getInventory().setItem(1, crossbow);
+        p.getInventory().setItem(8, new ItemStack(Material.TIPPED_ARROW, 32));
+        p.getInventory().setItem(7, new ItemStack(Material.SPECTRAL_ARROW, 12));
 
     }
 }

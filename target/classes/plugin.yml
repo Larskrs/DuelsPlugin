@@ -5,6 +5,7 @@ api-version: 1.18
 description: Duels plugin
 commands:
   duel:
+load: POSTWORLD
 permissions:
   simpleduels.bypass.build:
     description: bypass anti block break system.

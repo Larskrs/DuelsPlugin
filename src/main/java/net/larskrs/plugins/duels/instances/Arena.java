@@ -172,7 +172,6 @@ public class Arena {
         player.setHealth(player.getMaxHealth());
         removeTeam(player);
         player.closeInventory();
-        removeKit(player.getUniqueId());
         player.sendTitle("", ""); //Resets the title to instantly hide.
         player.getInventory().clear();
         player.setFoodLevel(20);
@@ -187,9 +186,7 @@ public class Arena {
             this.reset(true);
             return;
         }
-        if (state == GameState.LIVE) {
-            updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(), "Players: " + players.size());
-        }
+        updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(), state == GameState.LIVE ? "Players: " + players.size() : "");
     }
     public void setState (GameState state) {
         this.state = state;

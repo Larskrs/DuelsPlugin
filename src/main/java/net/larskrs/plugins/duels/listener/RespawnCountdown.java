@@ -32,7 +32,8 @@ public class RespawnCountdown extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (arena.getState() != null || !arena.getState().equals(GameState.RECRUITING)) {
+        this.arena = duels.getArenaManager().getArena(player);
+        if (arena != null) {
             if (startupTime == 0) {
                 arena.respawnPlayer(player.getUniqueId());
                 this.cancel();

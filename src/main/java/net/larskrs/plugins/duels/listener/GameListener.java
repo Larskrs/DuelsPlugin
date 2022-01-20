@@ -10,13 +10,18 @@ import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
+import net.minecraft.network.protocol.game.PacketPlayOutCamera;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
@@ -25,6 +30,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.util.Vector;
 
 public class GameListener implements Listener {
 
@@ -64,7 +70,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onSignClick(PlayerInteractEvent e) {
-        if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock() && e.getClickedBlock().getType().equals(XMaterial.OAK_WALL_SIGN.parseMaterial())) {
+        if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock() && e.getClickedBlock().getType().equals(XMaterial.OAK_WALL_SIGN.parseMaterial()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
             Arena a = duels.getArenaManager().getArena(e.getClickedBlock().getLocation());
             if (a != null) {
                 Bukkit.dispatchCommand(e.getPlayer(), "duel join " + a.getId());
@@ -79,76 +85,67 @@ public class GameListener implements Listener {
 
         if (e.getEntity() instanceof Player) {
 
-        Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
-        Player p = (Player) e.getEntity();
-        Player killer = null;
+            Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
+            Player p = (Player) e.getEntity();
+            Player killer = null;
 
 
-
-        if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
-            p.teleport(ConfigManager.getLobbySpawnLocation());
-            p.sendMessage("void = death. bruh");
-            e.setCancelled(true);
-            return;
-        }
-
-        if (e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg || e.getDamager() instanceof Arrow || e.getDamager() instanceof Trident || e.getDamager() instanceof SpectralArrow || e.getDamager() instanceof EnderPearl) {
-            Projectile pj = (Projectile) e.getDamager();
-            if (pj.getShooter() instanceof Player) {
-                killer = (Player) pj.getShooter();
+            if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+                p.teleport(ConfigManager.getLobbySpawnLocation());
+                p.sendMessage("void = death. bruh");
+                p.setHealth(p.getMaxHealth());
+                p.setGameMode(GameMode.SURVIVAL);
+                e.setCancelled(true);
+                return;
             }
-        } else if (e.getDamager() instanceof Player) {
-            killer = (Player) e.getDamager();
-        }
 
-        if (a == null) {
-            e.setCancelled(true);
-            return;
-        }
+            if (e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg || e.getDamager() instanceof Arrow || e.getDamager() instanceof Trident || e.getDamager() instanceof SpectralArrow || e.getDamager() instanceof EnderPearl) {
+                Projectile pj = (Projectile) e.getDamager();
+                if (pj.getShooter() instanceof Player) {
+                    killer = (Player) pj.getShooter();
+                }
+            } else if (e.getDamager() instanceof Player) {
+                killer = (Player) e.getDamager();
+            }
 
-        if (a.getState() != GameState.LIVE) {
-            e.setCancelled(true);
-        }
+            if (a == null) {
+                e.setCancelled(true);
+                return;
+            }
 
-        if (a.getTeam(p) == a.getTeam(killer)) {
-            e.setCancelled(true);
-            return;
-        }
+            if (a.getState() != GameState.LIVE) {
+                e.setCancelled(true);
+            }
 
-            System.out.println( "can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
-        if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
-            e.setCancelled(true);
-            // custom respawn logic.
+            if (a.getTeam(p) == a.getTeam(killer)) {
+                e.setCancelled(true);
+                return;
+            }
 
-            if (duels.getArenaManager().getArena(p) != null) {
+            System.out.println("can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
+            if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
+                e.setCancelled(true);
+                // custom respawn logic.
+
+                if (duels.getArenaManager().getArena(p) != null) {
 
 
                     // player is in arena.
 
-                    if (killer == null || killer == p || e.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING) || e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK))  {
-                        p.setGameMode(GameMode.SPECTATOR);
-                        new RespawnCountdown(duels, p, 10).start();
-                        e.setCancelled(true);
+                    a.getGame().onCustomRespawn(p, killer);
+                    new RespawnCountdown(duels, p, 10).start();
 
-                    } else {
+                    p.setGameMode(GameMode.SPECTATOR);
 
-                        a.getGame().onCustomRespawn(p, killer);
-                        new RespawnCountdown(duels, p, 10).start();
+                } else {
 
-                        p.setGameMode(GameMode.SPECTATOR);
-
-                    }
-
-
-            } else {
-
-                p.teleport(ConfigManager.getLobbySpawnLocation());
-                p.setHealth(p.getMaxHealth());
+                    p.teleport(ConfigManager.getLobbySpawnLocation());
+                    p.setHealth(p.getMaxHealth());
+                }
             }
         }
-        }
-
     }
+
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
 
@@ -160,9 +157,22 @@ public class GameListener implements Listener {
             Player p = (Player) e.getEntity();
 
             if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+                if (a != null && a.getState() == GameState.LIVE) {
+                    p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), duels.getArenaManager().getArena(p).getTeam(p)));
+                    p.sendMessage("void = death. bruh");
+                    p.setVelocity(new Vector(0, 0, 0));
+                    p.setFallDistance(0);
+                    e.setDamage(0);
+                    a.respawnPlayer(p.getUniqueId());
+                    return;
+                }
+
+                e.setCancelled(true);
                 p.teleport(ConfigManager.getLobbySpawnLocation());
                 p.sendMessage("void = death. bruh");
-                e.setCancelled(true);
+                p.setVelocity(new Vector(0, 0, 0));
+                p.setFallDistance(0);
+                e.setDamage(0);
                 return;
             }
 
