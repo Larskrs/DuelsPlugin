@@ -8,6 +8,7 @@ net\larskrs\plugins\duels\Kits\PranksterKit.class
 net\larskrs\plugins\duels\Files\PlayerDataFile.class
 net\larskrs\plugins\duels\listener\GameListener.class
 net\larskrs\plugins\duels\instances\Arena.class
+net\larskrs\plugins\duels\UpdateLoop.class
 net\larskrs\plugins\duels\instances\Kit.class
 net\larskrs\plugins\duels\GUI\TeamGUI.class
 net\larskrs\plugins\duels\listener\RespawnCountdown.class
