@@ -15,6 +15,7 @@ public final class Duels extends JavaPlugin {
 
     private ArenaManager arenaManager;
     private static Duels instance;
+    private static UpdateLoop loop;
 
     @Override
     public void onEnable() {
@@ -32,8 +33,7 @@ public final class Duels extends JavaPlugin {
 
         new KitsFile(this);
         new PlayerDataFile(this);
-
-
+        loop = new UpdateLoop(this);
 
     }
 
@@ -42,6 +42,7 @@ public final class Duels extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        loop.stop();
     }
     public ArenaManager getArenaManager () { return arenaManager; }
 

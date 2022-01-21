@@ -156,6 +156,8 @@ public class GameListener implements Listener {
             return;
         }
 
+
+
         if (e.getEntity() instanceof Player) {
 
             Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
@@ -167,6 +169,9 @@ public class GameListener implements Listener {
                 p.teleport(ConfigManager.getLobbySpawnLocation());
                 p.sendMessage("void = death. bruh");
                 p.setFallDistance(0);
+                p.setFoodLevel(20);
+                p.setHealth(p.getMaxHealth());
+                p.setGameMode(GameMode.SURVIVAL);
 
                 if (a != null) {
                     a.respawnPlayer(p.getUniqueId());
