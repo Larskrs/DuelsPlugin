@@ -9,6 +9,7 @@ import net.larskrs.plugins.duels.Games.LastStanding;
 import net.larskrs.plugins.duels.Kits.ArcherKit;
 import net.larskrs.plugins.duels.Kits.KnightKit;
 import net.larskrs.plugins.duels.Kits.PearlerKit;
+import net.larskrs.plugins.duels.Kits.PranksterKit;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.listener.RespawnCountdown;
@@ -41,11 +42,11 @@ public class Arena {
     private Scoreboard scoreboard;
     private ArenaOptions options;
 
-    public Arena(Duels duels, int id, Location spawn, Location sign) {
+    public Arena(Duels duels, int id, Location spawn) {
         this.duels = duels;
         this.id = id;
         this.spawn = spawn;
-        this.sign = sign;
+        this.sign = ConfigManager.getLocation("arenas." + id + ".sign");
         ScoreboardManager sm = Bukkit.getScoreboardManager();
         scoreboard = sm.getNewScoreboard();
         setState(GameState.RECRUITING);
@@ -91,11 +92,13 @@ public class Arena {
                 Location loc = ConfigManager.getLobbySpawnLocation();
                 for (UUID uuid : players) {
                     Player p = Bukkit.getPlayer(uuid);
+                    p.getInventory().clear();
                     p.teleport(loc);
                     removeKit(p.getUniqueId());
                     p.setHealth(p.getMaxHealth());
                     p.setFoodLevel(20);
                     p.setArrowsInBody(0);
+                    p.setFireTicks(0);
                 }
                 players.clear();
                 teams.clear();
@@ -148,6 +151,7 @@ public class Arena {
         player.getInventory().clear();
         player.setFoodLevel(20);
         player.setGameMode(GameMode.SURVIVAL);
+        player.setFireTicks(0);
 
         TreeMultimap<Integer, Team> count = TreeMultimap.create();
         for (Team t : Team.values()) {
@@ -225,6 +229,8 @@ public class Arena {
             kits.put(uuid, new ArcherKit(type, uuid));
         } else if (type == KitType.PEARLER) {
             kits.put(uuid, new PearlerKit(type, uuid));
+        } else if (type == KitType.PRANKSTER) {
+            kits.put(uuid, new PranksterKit(type, uuid));
         }
 
         PlayerDataFile.getConfig().set(Bukkit.getPlayer(uuid).getName() + ".kit", type.name());

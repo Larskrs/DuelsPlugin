@@ -23,13 +23,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class GameListener implements Listener {
@@ -83,21 +86,20 @@ public class GameListener implements Listener {
 
         // Damage Blackslists
 
+
+
+
         if (e.getEntity() instanceof Player) {
 
             Arena a = duels.getArenaManager().getArena((Player) e.getEntity());
             Player p = (Player) e.getEntity();
             Player killer = null;
 
-
-            if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
-                p.teleport(ConfigManager.getLobbySpawnLocation());
-                p.sendMessage("void = death. bruh");
-                p.setHealth(p.getMaxHealth());
-                p.setGameMode(GameMode.SURVIVAL);
-                e.setCancelled(true);
+            if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) {
+                e.setDamage(e.getDamage() / 2);
                 return;
             }
+
 
             if (e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg || e.getDamager() instanceof Arrow || e.getDamager() instanceof Trident || e.getDamager() instanceof SpectralArrow || e.getDamager() instanceof EnderPearl) {
                 Projectile pj = (Projectile) e.getDamager();
@@ -150,6 +152,9 @@ public class GameListener implements Listener {
     public void onPlayerDamage(EntityDamageEvent e) {
 
         // Damage Blackslists
+        if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK) ||  e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) {
+            return;
+        }
 
         if (e.getEntity() instanceof Player) {
 
@@ -157,22 +162,15 @@ public class GameListener implements Listener {
             Player p = (Player) e.getEntity();
 
             if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
-                if (a != null && a.getState() == GameState.LIVE) {
-                    p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), duels.getArenaManager().getArena(p).getTeam(p)));
-                    p.sendMessage("void = death. bruh");
-                    p.setVelocity(new Vector(0, 0, 0));
-                    p.setFallDistance(0);
-                    e.setDamage(0);
-                    a.respawnPlayer(p.getUniqueId());
-                    return;
-                }
-
+                e.setDamage(0);
                 e.setCancelled(true);
                 p.teleport(ConfigManager.getLobbySpawnLocation());
                 p.sendMessage("void = death. bruh");
-                p.setVelocity(new Vector(0, 0, 0));
                 p.setFallDistance(0);
-                e.setDamage(0);
+
+                if (a != null) {
+                    a.respawnPlayer(p.getUniqueId());
+                }
                 return;
             }
 
@@ -195,9 +193,9 @@ public class GameListener implements Listener {
                     // player is in arena.
 
                     a.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + p.getName() + " was killed!");
-                        p.setGameMode(GameMode.SPECTATOR);
-                        new RespawnCountdown(duels, p, 10).start();
-                        e.setCancelled(true);
+                    new RespawnCountdown(duels, p, 10).start();
+
+                    p.setGameMode(GameMode.SPECTATOR);
 
 
 
@@ -207,6 +205,7 @@ public class GameListener implements Listener {
                     p.teleport(ConfigManager.getLobbySpawnLocation());
                     p.setHealth(p.getMaxHealth());
                 }
+                e.setCancelled(true);
             }
         }
 
@@ -222,9 +221,27 @@ public class GameListener implements Listener {
     }
     @EventHandler
     public void onBlockBreak(BlockPlaceEvent e) {
+
+        if (e.getBlock().getType() == Material.TNT) {
+            e.getPlayer().getWorld().spawn(e.getBlockPlaced().getLocation(), EntityType.PRIMED_TNT.getEntityClass());
+            e.setCancelled(true);
+            e.getPlayer().getInventory().removeItem(new ItemStack(Material.TNT, 1));
+            return;
+        }
+
         if (!e.getPlayer().hasPermission("simpleduels.bypass.build") || duels.getArenaManager().getArena(e.getPlayer()) != null) {
             e.setCancelled(true);
         }
+    }
+    @EventHandler
+    public void onBlockBreak(PlayerDropItemEvent e) {
+        if (!e.getPlayer().hasPermission("simpleduels.bypass.drop") || duels.getArenaManager().getArena(e.getPlayer()) != null) {
+            e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void onTntExplode(EntityExplodeEvent e) {
+            e.blockList().clear();
     }
     @EventHandler
     public void hangingBreakByEntityEvent(HangingBreakByEntityEvent e) {
@@ -249,11 +266,20 @@ public class GameListener implements Listener {
 
 
             if (a != null) {
+
+                if (a.getState().equals(GameState.LIVE)) {
+                    p.sendMessage(ChatColor.RED + "You can not CHANGE team while playing.");
+                    p.closeInventory();
+                    return;
+                }
+
                 if (a.getTeam(p) == team) {
                     p.sendMessage(ChatColor.RED + "You are already on this team!");
                 } else {
                     if (a.getTeamCount(team) == 1) {
                         p.sendMessage(ChatColor.RED + "You can not leave the team, it will be empty!");
+                        return;
+
                     }
                     a.setTeam(p, team);
                     new TeamGUI(a, p);
@@ -261,12 +287,12 @@ public class GameListener implements Listener {
 
 
             }
+
             e.setCancelled(true);
         } else if (e.getClickedInventory() != null && e.getCurrentItem() != null && e.getView().getTitle().contains("Kit Selection")) {
             KitType type = KitType.valueOf(e.getCurrentItem().getItemMeta().getLocalizedName());
             Player p = (Player) e.getWhoClicked();
             Arena a = Duels.getInstance().getArenaManager().getArena(p);
-
 
                 KitType currentKit = PlayerDataFile.getLastSavedKit(p.getUniqueId());
                 if (currentKit != null && currentKit == type) {

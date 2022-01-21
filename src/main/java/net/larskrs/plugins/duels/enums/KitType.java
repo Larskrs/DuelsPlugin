@@ -9,7 +9,8 @@ public enum KitType {
 
     KNIGHT(ChatColor.YELLOW + "Knight", Material.IRON_SWORD, ChatColor.GRAY + "For those of you that stick to others."),
     ARCHER(ChatColor.YELLOW + "Archer", Material.CROSSBOW, ChatColor.GRAY + "For those of you that keep your eyes close. \n " + ChatColor.YELLOW + "Credit: tnrtt"),
-    PEARLER(ChatColor.YELLOW + "Pearler", Material.ENDER_PEARL, ChatColor.GRAY + "For those that like the exit more than the fight.");
+    PEARLER(ChatColor.YELLOW + "Pearler", Material.ENDER_PEARL, ChatColor.GRAY + "For those that like the exit more than the fight."),
+    PRANKSTER(ChatColor.YELLOW + "Prankster", Material.TNT, ChatColor.GRAY + "For those that play the card of the party bomb.");
 
     private String display;
     private Material icon;

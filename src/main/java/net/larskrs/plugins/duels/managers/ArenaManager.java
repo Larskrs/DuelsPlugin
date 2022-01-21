@@ -22,7 +22,7 @@ public class ArenaManager {
         arenas  = new ArrayList<>();
         FileConfiguration config = duels.getConfig();
         for (String s : config.getConfigurationSection("arenas").getKeys(false)) {
-            arenas.add(new Arena(duels, Integer.parseInt(s), ConfigManager.getArenaSpawn(Integer.parseInt(s)), ConfigManager.getLocation("arenas." + Integer.parseInt(s) + ".sign")));
+            arenas.add(new Arena(duels, Integer.parseInt(s), ConfigManager.getArenaSpawn(Integer.parseInt(s))));
         }
         Bukkit.getConsoleSender().sendMessage(ChatColor.GRAY + "loaded: " + arenas.size() + " arenas.");
     }

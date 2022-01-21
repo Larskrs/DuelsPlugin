@@ -34,22 +34,14 @@ public class DuelCommand implements CommandExecutor {
             } else if (args.length == 1 && args[0].equalsIgnoreCase("team")) {
                 Arena a = duels.getArenaManager().getArena(p);
                 if (a != null) {
-                    if (a.getState() != GameState.LIVE) {
-                        new TeamGUI(a , p);
-                    } else {
-                        p.sendMessage(ChatColor.RED + "You can not use this while playing!");
-                    }
+                         new TeamGUI(a , p);
                 } else {
                     p.sendMessage(ChatColor.RED + "You are not in a match!");
                 }
             } else if (args.length == 1 && args[0].equalsIgnoreCase("kit")) {
                 Arena a = duels.getArenaManager().getArena(p);
                 if (a != null) {
-                    if (a.getState() != GameState.LIVE) {
                         new KitGUI(a , p);
-                    } else {
-                        p.sendMessage(ChatColor.RED + "You can not use this while playing!");
-                    }
                 } else {
                     new KitGUI(a , p);
                 }

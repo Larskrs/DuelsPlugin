@@ -4,6 +4,7 @@ net\larskrs\plugins\duels\enums\KitType.class
 net\larskrs\plugins\duels\Duels.class
 net\larskrs\plugins\duels\Games\LastStanding.class
 net\larskrs\plugins\duels\Games\Deathmatch.class
+net\larskrs\plugins\duels\Kits\PranksterKit.class
 net\larskrs\plugins\duels\Files\PlayerDataFile.class
 net\larskrs\plugins\duels\listener\GameListener.class
 net\larskrs\plugins\duels\instances\Arena.class

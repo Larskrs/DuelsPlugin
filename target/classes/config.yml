@@ -8,42 +8,19 @@ lobby-spawn:
   yaw: 0
   pitch: 0
 arenas:
-  0:
+  1:
     sign:
-
-    options:
-      game-type: 'LASTSTANDING'
-      points-to-win: 5
-    spawn:
       world: 'world'
-      x: 65
-      y: 65
-      z: 65
+      x: 66
+      y: 102
+      z: -24
       yaw: 0
       pitch: 0
-    teams:
-      RED:
-        spawn:
-          world: 'world'
-          x: 65
-          y: 80
-          z: 35
-          yaw: 0
-          pitch: 0
-      BLUE:
-        spawn:
-          world: 'world'
-          x: 65
-          y: 80
-          z: 75
-          yaw: 180
-          pitch: 0
-  1:
     options:
       game-type: 'DEATHMATCH'
       points-to-win: 5
     spawn:
-      world: 'siege'
+      world: 'world'
       x: -1.5
       y: 94
       z: -85.5
@@ -52,7 +29,7 @@ arenas:
     teams:
       RED:
         spawn:
-          world: 'siege'
+          world: 'world'
           x: -1.5
           y: 94
           z: -85.5
@@ -60,65 +37,9 @@ arenas:
           pitch: 0
       BLUE:
         spawn:
-          world: 'siege'
+          world: 'world'
           x: -1.5
           y: 94
           z: -23.5
-          yaw: 180
-          pitch: 0
-  2:
-    options:
-      game-type: 'DEATHMATCH'
-      points-to-win: 5
-    spawn:
-      world: 'siege'
-      x: 65
-      y: 65
-      z: 65
-      yaw: 0
-      pitch: 0
-    teams:
-      RED:
-        spawn:
-          world: 'siege'
-          x: 0.5
-          y: 65
-          z: 0.5
-          yaw: 0
-          pitch: 0
-      BLUE:
-        spawn:
-          world: 'siege'
-          x: 0.5
-          y: 65
-          z: 40
-          yaw: 180
-          pitch: 0
-  3:
-    options:
-      game-type: 'LASTSTANDING'
-      points-to-win: 5
-    spawn:
-      world: 'world'
-      x: 65
-      y: 65
-      z: 65
-      yaw: 0
-      pitch: 0
-    teams:
-      RED:
-        spawn:
-          world: 'world'
-          x: 65
-          y: 80
-          z: 35
-          yaw: 0
-          pitch: 0
-      BLUE:
-        spawn:
-          world: 'world'
-          x: 65
-          y: 80
-          z: 75
           yaw: 180
           pitch: 0

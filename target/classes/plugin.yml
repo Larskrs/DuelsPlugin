@@ -10,3 +10,6 @@ permissions:
   simpleduels.bypass.build:
     description: bypass anti block break system.
     default: op
+  simpleduels.bypass.drop:
+    description: bypass anti drop system.
+    default: op

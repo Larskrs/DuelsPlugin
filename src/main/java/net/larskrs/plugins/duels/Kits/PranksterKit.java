@@ -3,15 +3,14 @@ package net.larskrs.plugins.duels.Kits;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Kit;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-public class ArcherKit extends Kit {
-    public ArcherKit(KitType type, UUID uuid) {
-        super(KitType.ARCHER, uuid);
+public class PranksterKit extends Kit {
+    public PranksterKit(KitType type, UUID uuid) {
+        super(KitType.PRANKSTER, uuid);
     }
 
     @Override
@@ -22,8 +21,7 @@ public class ArcherKit extends Kit {
         p.getInventory().setBoots(new ItemStack(Material.LEATHER_BOOTS));
 
         p.getInventory().setItem(0, new ItemStack(Material.STONE_SWORD));
-        p.getInventory().setItem(1, new ItemStack(Material.BOW));
-        p.getInventory().setItem(8, new ItemStack(Material.ARROW, 20));
+        p.getInventory().setItem(1, new ItemStack(Material.TNT, 2));
 
     }
 }
