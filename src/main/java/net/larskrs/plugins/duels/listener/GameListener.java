@@ -35,12 +35,23 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class GameListener implements Listener {
 
     private Duels duels;
+    private HashMap<UUID, UUID> lastHit;
 
     public GameListener(Duels duels) {
         this.duels = duels;
+        this.lastHit = new HashMap<>();
+    }
+
+    public void resetLastHit(Player player) {
+
+        this.lastHit.remove(player.getUniqueId());
+
     }
 
     @EventHandler
@@ -68,6 +79,13 @@ public class GameListener implements Listener {
             } else {
                 e.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onUnwantedSpawns(EntitySpawnEvent e) {
+        if (e.getEntity().getType() == EntityType.ENDERMITE) {
+            e.setCancelled(true);
         }
     }
 
@@ -119,10 +137,13 @@ public class GameListener implements Listener {
                 e.setCancelled(true);
             }
 
-            if (a.getTeam(p) == a.getTeam(killer)) {
+            if (a.getTeam(p) == a.getTeam(killer) && p != killer) {
                 e.setCancelled(true);
                 return;
             }
+
+
+            lastHit.put(e.getEntity().getUniqueId(), killer.getUniqueId());
 
             System.out.println("can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
             if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
@@ -192,6 +213,8 @@ public class GameListener implements Listener {
                 e.setCancelled(true);
                 // custom respawn logic.
 
+
+
                 if (duels.getArenaManager().getArena(p) != null) {
 
 
@@ -199,7 +222,12 @@ public class GameListener implements Listener {
 
                     a.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + p.getName() + " was killed!");
                     new RespawnCountdown(duels, p, 10).start();
-
+                    if (lastHit.get(p.getUniqueId()) == null) {
+                    a.respawnPlayer(p.getUniqueId());
+                    } else {
+                        a.getGame().onCustomRespawn(p, Bukkit.getPlayer(lastHit.get(p.getUniqueId())));
+                        Duels.getGameListener().resetLastHit(p);
+                    }
                     p.setGameMode(GameMode.SPECTATOR);
 
 

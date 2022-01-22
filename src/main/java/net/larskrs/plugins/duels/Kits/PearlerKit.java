@@ -15,6 +15,7 @@ public class PearlerKit extends Kit {
 
     @Override
     public void onStart(Player p) {
+        p.getInventory().clear();
         p.getInventory().setHelmet(new ItemStack(Material.LEATHER_HELMET));
         p.getInventory().setChestplate(new ItemStack(Material.IRON_CHESTPLATE));
         p.getInventory().setLeggings(new ItemStack(Material.IRON_LEGGINGS));

@@ -3,6 +3,7 @@ package net.larskrs.plugins.duels.listener;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.managers.ConfigManager;
+import net.larskrs.plugins.duels.managers.NametagManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,6 +21,7 @@ public class ConnectListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         e.getPlayer().teleport(ConfigManager.getLobbySpawnLocation());
+        NametagManager.setNameTags(e.getPlayer());
     }
     @EventHandler
     public void onQuit (PlayerQuitEvent e) {
@@ -28,5 +30,6 @@ public class ConnectListener implements Listener {
         if (a != null) {
             a.removePlayer(p);
         }
+        NametagManager.removeTag(p);
     }
 }

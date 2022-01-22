@@ -7,6 +7,7 @@ import net.larskrs.plugins.duels.listener.ConnectListener;
 import net.larskrs.plugins.duels.listener.GameListener;
 import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
+import net.larskrs.plugins.duels.managers.NametagManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +17,7 @@ public final class Duels extends JavaPlugin {
     private ArenaManager arenaManager;
     private static Duels instance;
     private static UpdateLoop loop;
+    private static GameListener gameListener;
 
     @Override
     public void onEnable() {
@@ -26,7 +28,8 @@ public final class Duels extends JavaPlugin {
         ConfigManager.setupConfig(this); // STEP 1
         arenaManager = new ArenaManager(this); // STEP 2
 
-        Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
+        gameListener = new GameListener(this);
+        Bukkit.getPluginManager().registerEvents(gameListener, this);
         Bukkit.getPluginManager().registerEvents(new ConnectListener(this), this);
 
         getCommand("duel").setExecutor(new DuelCommand(this));
@@ -34,6 +37,7 @@ public final class Duels extends JavaPlugin {
         new KitsFile(this);
         new PlayerDataFile(this);
         loop = new UpdateLoop(this);
+        //NametagManager.setNameTags();
 
     }
 
@@ -49,4 +53,5 @@ public final class Duels extends JavaPlugin {
     public static Duels getInstance() {
         return instance;
     }
+    public static GameListener getGameListener () {return gameListener; }
 }

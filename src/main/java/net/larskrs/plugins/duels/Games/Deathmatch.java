@@ -20,12 +20,15 @@ import org.bukkit.inventory.ItemStack;
 public class Deathmatch extends Game {
 
     private HashMap<Team, Integer> points;
+    private int pointsToWin;
     private Duels duels;
+
 
     public Deathmatch(Duels duels, Arena arena) {
         super(duels, arena);
         this.duels = duels;
         this.points = new HashMap<>();
+        this.pointsToWin = (ConfigManager.getGamePointsToWin(arena.getId()) * arena.getPlayers().size() / 2);
 
         for (Team t : Team.values()) {
             points.put(t, 0);
@@ -50,17 +53,24 @@ public class Deathmatch extends Game {
         arena.setState(GameState.LIVE);
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
-        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + ConfigManager.getGamePointsToWin(arena.getId()) + " kills for your team!");
+        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + pointsToWin + " kills for your team!");
+
+        for (UUID uuid : arena.getPlayers()) {
+            Bukkit.getPlayer(uuid).setFireTicks(0);
+        }
 
     }
 
     @Override
     public void onCustomRespawn(Player hurt, Player killer) {
-        if (arena.getPlayers().contains(hurt.getUniqueId()) && arena.getPlayers().contains(killer.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
+
+        Player lHit = killer;
+
+        if (arena.getPlayers().contains(hurt.getUniqueId()) && arena.getPlayers().contains(lHit.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
             // Both players were in the live match.
-            arena.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + hurt.getName() + " was killed by " + killer.getName() + "!");
-            arena.sendMessage(ChatColor.GOLD + "" + arena.getTeam(killer).getDisplay() + ChatColor.YELLOW + "'s points (" + ChatColor.AQUA + (this.points.get(arena.getTeam(killer)) + 1) + ChatColor.YELLOW + "/" + ChatColor.AQUA + ConfigManager.getGamePointsToWin(arena.getId()) + ChatColor.YELLOW + ")" + "!");
-            addPoint(arena.getTeam(killer));
+            arena.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + hurt.getName() + " was killed by " + lHit.getName() + "!");
+            arena.sendMessage(ChatColor.GOLD + "" + arena.getTeam(lHit).getDisplay() + ChatColor.YELLOW + "'s points (" + ChatColor.AQUA + (this.points.get(arena.getTeam(lHit)) + 1) + ChatColor.YELLOW + "/" + ChatColor.AQUA + pointsToWin + ChatColor.YELLOW + ")" + "!");
+            addPoint(arena.getTeam(lHit));
 
 
         }
@@ -68,8 +78,13 @@ public class Deathmatch extends Game {
 
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
-        if (teamPoints >= ConfigManager.getGamePointsToWin(arena.getId())) {
+        if (teamPoints >= (ConfigManager.getGamePointsToWin(arena.getId())) * arena.getTeamCount(team)) {
             arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
+            for (UUID pl : arena.getPlayers()) {
+                if (arena.getTeam(Bukkit.getPlayer(pl)) == team) {
+                    arena.sendMessage(ChatColor.GRAY + " - " + team.getDisplay() + " " + Bukkit.getPlayer(pl).getName());
+                }
+            }
             arena.reset(true);
         }
 

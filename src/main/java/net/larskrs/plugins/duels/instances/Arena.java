@@ -14,6 +14,7 @@ import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.listener.RespawnCountdown;
 import net.larskrs.plugins.duels.managers.ConfigManager;
+import net.larskrs.plugins.duels.managers.NametagManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
+import javax.naming.Name;
 import java.util.*;
 
 public class Arena {
@@ -60,6 +62,7 @@ public class Arena {
         } else if (ConfigManager.getGameType(id).contains("LASTSTANDING")) {
             this.game = new LastStanding(duels, this);
         }
+
     }
 
     private ArenaOptions loadOptions() {
@@ -164,7 +167,7 @@ public class Arena {
         updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(),  "Players: " + players.size());
 
         //if (state == GameState.RECRUITING && players.size() >= ConfigManager.getRequiredPlayers() ) {
-        if (state == GameState.RECRUITING && players.size() % 2 == 0 || players.size() >= ConfigManager.getRequiredPlayers()) {
+        if (players.size() >= ConfigManager.getRequiredPlayers()) {
             countdown.start();
         }
     }
@@ -180,6 +183,7 @@ public class Arena {
         player.getInventory().clear();
         player.setFoodLevel(20);
         player.setGameMode(GameMode.SURVIVAL);
+        NametagManager.removeTag(player);
 
         if (state == GameState.COUNTDOWN && players.size() < ConfigManager.getRequiredPlayers()) {
             sendMessage(ChatColor.RED + "Not enough players for game to start. :(");
@@ -200,6 +204,7 @@ public class Arena {
     public void setTeam (Player player, Team team) {
         removeTeam(player);
         teams.put(player.getUniqueId(), team);
+        NametagManager.newTag(player, team);
 
 
         player.sendMessage(ChatColor.YELLOW + "You have been placed on the " + team.getDisplay() + ChatColor.YELLOW + " team!");
@@ -208,6 +213,7 @@ public class Arena {
         if (teams.containsKey(player.getUniqueId())) {
             teams.remove(player.getUniqueId());
         }
+        NametagManager.removeTag(player);
     }
     public int getTeamCount (Team team) {
         int amount = 0;
