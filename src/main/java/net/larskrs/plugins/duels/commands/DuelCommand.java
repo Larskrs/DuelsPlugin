@@ -5,13 +5,20 @@ import net.larskrs.plugins.duels.GUI.KitGUI;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.managers.ArenaManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
-public class DuelCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class DuelCommand implements CommandExecutor, TabCompleter {
 
     private Duels duels;
 
@@ -98,5 +105,32 @@ public class DuelCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "This command can only be run by players :(");
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+        List<String> options = new ArrayList<>();
+
+        if (args.length == 1) {
+            options.add("join");
+            options.add("team");
+            options.add("kit");
+            options.add("leave");
+            if (sender.hasPermission("simpleduels.command.reload")) {
+                options.add("reload");
+            }
+
+            return StringUtil.copyPartialMatches(args[0], options, new ArrayList<>());
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("join")) {
+            for (Arena a : duels.getArenaManager().getArenas()) {
+                if (!a.getState().equals(GameState.LIVE)) {
+                    options.add(a.getId() + "");
+                }
+            }
+            return options;
+        }
+
+        return null;
     }
 }

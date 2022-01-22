@@ -10,16 +10,18 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+
 import net.larskrs.plugins.duels.Duels;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.*;
 
 public class Deathmatch extends Game {
 
     private HashMap<Team, Integer> points;
+    private HashMap<UUID, Integer> Playerpoints;
     private int pointsToWin;
     private Duels duels;
 
@@ -28,11 +30,13 @@ public class Deathmatch extends Game {
         super(duels, arena);
         this.duels = duels;
         this.points = new HashMap<>();
-        this.pointsToWin = (ConfigManager.getGamePointsToWin(arena.getId()) * arena.getPlayers().size() / 2);
+        this.Playerpoints = new HashMap<>();
 
         for (Team t : Team.values()) {
             points.put(t, 0);
-
+        }
+        for (UUID uuid : arena.getPlayers()) {
+            Playerpoints.put(uuid, 0);
         }
     }
 
@@ -51,12 +55,38 @@ public class Deathmatch extends Game {
     @Override
     public void onStart() {
         arena.setState(GameState.LIVE);
+
+        this.pointsToWin = Math.round(ConfigManager.getGamePointsToWin(arena.getId()) * (arena.getPlayers().size() / 2));
+
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + pointsToWin + " kills for your team!");
 
         for (UUID uuid : arena.getPlayers()) {
-            Bukkit.getPlayer(uuid).setFireTicks(0);
+            Player p = Bukkit.getPlayer(uuid);
+            Scoreboard board = p.getScoreboard();
+            Objective obj;
+            if (board.getObjective("deathmatchBoard") == null) {
+            obj = board.registerNewObjective("deathmatchBoard", "dummy");
+            } else {
+                obj = board.getObjective("deathmatchBoard");
+            }
+            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+            obj.setDisplayName(ChatColor.YELLOW.toString() + ChatColor.BOLD + "DUELS");
+
+            Set<String> scoreList = board.getEntries();
+            for (String s : scoreList) {
+                board.resetScores(s);
+            }
+
+            Score s1 = obj.getScore(""); s1.setScore(0);
+            Score s2 = obj.getScore(ChatColor.AQUA + "Team: " + arena.getTeam(p).getDisplay()); s2.setScore(1);
+            Score s3 = obj.getScore(ChatColor.RED + ""); s3.setScore(2);
+
+            p.setScoreboard(board);
+
+            p.setFireTicks(0);
+
         }
 
     }
@@ -71,6 +101,7 @@ public class Deathmatch extends Game {
             arena.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + hurt.getName() + " was killed by " + lHit.getName() + "!");
             arena.sendMessage(ChatColor.GOLD + "" + arena.getTeam(lHit).getDisplay() + ChatColor.YELLOW + "'s points (" + ChatColor.AQUA + (this.points.get(arena.getTeam(lHit)) + 1) + ChatColor.YELLOW + "/" + ChatColor.AQUA + pointsToWin + ChatColor.YELLOW + ")" + "!");
             addPoint(arena.getTeam(lHit));
+            Playerpoints.replace(killer.getUniqueId(), Playerpoints.get(killer.getUniqueId()) + 1);
 
 
         }
@@ -78,7 +109,7 @@ public class Deathmatch extends Game {
 
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
-        if (teamPoints >= (ConfigManager.getGamePointsToWin(arena.getId())) * arena.getTeamCount(team)) {
+        if (teamPoints >= pointsToWin) {
             arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
             for (UUID pl : arena.getPlayers()) {
                 if (arena.getTeam(Bukkit.getPlayer(pl)) == team) {

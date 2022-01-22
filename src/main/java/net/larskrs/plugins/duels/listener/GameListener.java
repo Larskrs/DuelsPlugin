@@ -113,6 +113,8 @@ public class GameListener implements Listener {
             Player p = (Player) e.getEntity();
             Player killer = null;
 
+            Boolean isProjectile = false;
+
             if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) {
                 e.setDamage(e.getDamage() / 2);
                 return;
@@ -120,10 +122,12 @@ public class GameListener implements Listener {
 
 
             if (e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg || e.getDamager() instanceof Arrow || e.getDamager() instanceof Trident || e.getDamager() instanceof SpectralArrow || e.getDamager() instanceof EnderPearl) {
+                isProjectile = true;
                 Projectile pj = (Projectile) e.getDamager();
                 if (pj.getShooter() instanceof Player) {
                     killer = (Player) pj.getShooter();
                 }
+                pj.remove();
             } else if (e.getDamager() instanceof Player) {
                 killer = (Player) e.getDamager();
             }
@@ -145,6 +149,7 @@ public class GameListener implements Listener {
 
             lastHit.put(e.getEntity().getUniqueId(), killer.getUniqueId());
 
+
             System.out.println("can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
             if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
                 e.setCancelled(true);
@@ -154,11 +159,13 @@ public class GameListener implements Listener {
 
 
                     // player is in arena.
+                    if (!isProjectile) {
 
                     a.getGame().onCustomRespawn(p, killer);
                     new RespawnCountdown(duels, p, 10).start();
 
                     p.setGameMode(GameMode.SPECTATOR);
+                    }
 
                 } else {
 
@@ -222,7 +229,7 @@ public class GameListener implements Listener {
 
                     a.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + p.getName() + " was killed!");
                     new RespawnCountdown(duels, p, 10).start();
-                    if (lastHit.get(p.getUniqueId()) == null) {
+                    if (lastHit.get(p.getUniqueId()) == null && lastHit.get(p.getUniqueId()) != p.getUniqueId()) {
                     a.respawnPlayer(p.getUniqueId());
                     } else {
                         a.getGame().onCustomRespawn(p, Bukkit.getPlayer(lastHit.get(p.getUniqueId())));

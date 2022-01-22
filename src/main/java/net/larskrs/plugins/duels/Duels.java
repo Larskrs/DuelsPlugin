@@ -33,6 +33,7 @@ public final class Duels extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ConnectListener(this), this);
 
         getCommand("duel").setExecutor(new DuelCommand(this));
+        getCommand("duel").setTabCompleter(new DuelCommand(this));
 
         new KitsFile(this);
         new PlayerDataFile(this);
