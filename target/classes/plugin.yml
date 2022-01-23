@@ -6,6 +6,7 @@ description: Duels plugin
 commands:
   duel:
 load: POSTWORLD
+softdepend: ["MultiVerse"]
 permissions:
   simpleduels.bypass.build:
     description: bypass anti block break system.

@@ -10,6 +10,7 @@ import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
+import net.larskrs.plugins.duels.tools.StorageBlockTool;
 import net.minecraft.network.protocol.game.PacketPlayOutCamera;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
@@ -91,6 +92,15 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onSignClick(PlayerInteractEvent e) {
+        if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock()) {
+            if (StorageBlockTool.isStorageBlock(e.getClickedBlock())) {
+                if (duels.getArenaManager().getArena(e.getPlayer()) != null) {
+                e.setCancelled(true);
+                return;
+                }
+            }
+        }
+
         if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock() && e.getClickedBlock().getType().equals(XMaterial.OAK_WALL_SIGN.parseMaterial()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
             Arena a = duels.getArenaManager().getArena(e.getClickedBlock().getLocation());
             if (a != null) {
@@ -136,6 +146,8 @@ public class GameListener implements Listener {
                 e.setCancelled(true);
                 return;
             }
+
+
 
             if (a.getState() != GameState.LIVE) {
                 e.setCancelled(true);
@@ -251,7 +263,19 @@ public class GameListener implements Listener {
 
     }
 
+    @EventHandler
+    public void onDeath(EntityDeathEvent e) {
+        if (e.getEntity().getKiller() != null && e.getEntity().getKiller() instanceof Player) {
+            Player p = (Player) e.getEntity();
+            if (duels.getArenaManager().getArena(p) != null) {
 
+            }
+        }
+
+        if (e.getEntity().getType() == EntityType.ARMOR_STAND) {
+
+        }
+    }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {

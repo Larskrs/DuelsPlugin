@@ -28,6 +28,7 @@ public class ConnectListener implements Listener {
 
         e.getPlayer().teleport(ConfigManager.getLobbySpawnLocation());
         NametagManager.setNameTags(e.getPlayer());
+        e.getPlayer().getInventory().clear();
     }
     @EventHandler
     public void onQuit (PlayerQuitEvent e) {

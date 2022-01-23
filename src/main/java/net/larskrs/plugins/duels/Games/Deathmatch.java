@@ -35,9 +35,6 @@ public class Deathmatch extends Game {
         for (Team t : Team.values()) {
             points.put(t, 0);
         }
-        for (UUID uuid : arena.getPlayers()) {
-            Playerpoints.put(uuid, 0);
-        }
     }
 
     @Override
@@ -57,7 +54,9 @@ public class Deathmatch extends Game {
         arena.setState(GameState.LIVE);
 
         this.pointsToWin = Math.round(ConfigManager.getGamePointsToWin(arena.getId()) * (arena.getPlayers().size() / 2));
-
+        for (UUID uuid : arena.getPlayers()) {
+            Playerpoints.put(uuid, 0);
+        }
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + pointsToWin + " kills for your team!");
@@ -82,6 +81,15 @@ public class Deathmatch extends Game {
             Score s1 = obj.getScore(""); s1.setScore(0);
             Score s2 = obj.getScore(ChatColor.AQUA + "Team: " + arena.getTeam(p).getDisplay()); s2.setScore(1);
             Score s3 = obj.getScore(ChatColor.RED + ""); s3.setScore(2);
+
+            Objective h = board.registerNewObjective("showhealth", Criterias.HEALTH);
+            h.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            h.setDisplayName(ChatColor.DARK_RED + "❤");
+
+
+
+            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+            obj.setDisplayName(ChatColor.YELLOW.toString() + ChatColor.BOLD + "DUELS");
 
             p.setScoreboard(board);
 
