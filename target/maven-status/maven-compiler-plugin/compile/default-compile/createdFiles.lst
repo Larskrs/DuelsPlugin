@@ -23,6 +23,7 @@ net\larskrs\plugins\duels\managers\Team.class
 net\larskrs\plugins\duels\tools\StorageBlockTool.class
 net\larskrs\plugins\duels\Files\KitsFile.class
 net\larskrs\plugins\duels\enums\GameState.class
+net\larskrs\plugins\duels\Games\Fortress.class
 net\larskrs\plugins\duels\commands\DuelCommand.class
 net\larskrs\plugins\duels\instances\ArenaOptions.class
 net\larskrs\plugins\duels\tools\XEntityType.class

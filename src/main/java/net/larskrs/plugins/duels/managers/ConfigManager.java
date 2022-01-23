@@ -40,7 +40,10 @@ public class ConfigManager {
         for (String s : config.getConfigurationSection("arenas." + id + ".teams").getKeys(false)) {
             System.out.println(s);
             if (s.equalsIgnoreCase(team.name())) {
-              return getLocation("arenas." + id + ".teams." + team.name() + ".spawn");
+
+                        return getLocation("arenas." + id + ".teams." + team.name() + ".spawn");
+
+
             }
         }
         return getLocation("arenas." + id + ".spawn");

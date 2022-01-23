@@ -30,8 +30,8 @@ public class PranksterKit extends Kit {
         lhelm.setItemMeta(lhe);
         p.getEquipment().setHelmet(lhelm);
 
-        p.getInventory().setChestplate(new ItemStack(Material.IRON_CHESTPLATE));
-        p.getInventory().setLeggings(new ItemStack(Material.IRON_LEGGINGS));
+        p.getInventory().setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
+        p.getInventory().setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
         ItemStack lboots = new ItemStack(Material.LEATHER_BOOTS, 1);
         LeatherArmorMeta lbo = (LeatherArmorMeta)lboots.getItemMeta();
         lbo.setColor(Duels.getInstance().getArenaManager().getArena(p).getTeam(p).getColor());
@@ -39,7 +39,8 @@ public class PranksterKit extends Kit {
         p.getEquipment().setBoots(lboots);
 
         p.getInventory().setItem(0, new ItemStack(Material.STONE_SWORD));
-        p.getInventory().setItem(1, new ItemStack(Material.TNT, 3));
+        p.getInventory().setItem(1, new ItemStack(Material.TNT, 2));
+        p.getInventory().setItem(4, new ItemStack(Material.COOKED_BEEF, 4));
         ItemStack potion = new ItemStack(Material.SPLASH_POTION, 2);
 
         PotionMeta potionmeta = (PotionMeta) potion.getItemMeta();

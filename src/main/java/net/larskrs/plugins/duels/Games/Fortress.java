@@ -1,32 +1,35 @@
 package net.larskrs.plugins.duels.Games;
 
+import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-import java.util.*;
-
-import net.larskrs.plugins.duels.Duels;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.*;
 
-public class Deathmatch extends Game {
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
+
+public class Fortress extends Game {
 
     private HashMap<Team, Integer> points;
     private HashMap<UUID, Integer> Playerpoints;
+
+
     private int pointsToWin;
     private Duels duels;
 
 
-    public Deathmatch(Duels duels, Arena arena) {
+    public Fortress(Duels duels, Arena arena) {
         super(duels, arena);
         this.duels = duels;
         this.points = new HashMap<>();
@@ -39,13 +42,7 @@ public class Deathmatch extends Game {
 
     @Override
     public void onNewRoundBegin() {
-        for (UUID uuid : arena.getPlayers()) {
-            Player p = Bukkit.getPlayer(uuid);
-            p.teleport(ConfigManager.getTeamSpawn(arena.getId(),arena.getTeam(p)));
-            p.setHealth(p.getMaxHealth());
-            p.setFoodLevel(20);
-            p.setArrowsInBody(0);
-        }
+
     }
 
 
@@ -58,8 +55,9 @@ public class Deathmatch extends Game {
             Playerpoints.put(uuid, 0);
         }
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
-        arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
-        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + pointsToWin + " kills for your team!");
+        arena.sendMessage(ChatColor.RED + "[F>RTR>SS] ");
+        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get as many points for your team as you can before the timer runs out!");
+        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + "You can get points by looting barrels or killing players.");
 
         for (UUID uuid : arena.getPlayers()) {
             Player p = Bukkit.getPlayer(uuid);
@@ -98,6 +96,9 @@ public class Deathmatch extends Game {
         }
 
     }
+    public void lootStorage(Player player, Block block) {
+        arena.sendMessage(arena.getTeam(player).getDisplay() + ChatColor.GOLD + " just looted a " + block.getType().name().toLowerCase() + " " + ChatColor.YELLOW + "'s points (" + ChatColor.AQUA + (this.points.get(arena.getTeam(player)) + 1) + ChatColor.YELLOW + "/" + ChatColor.AQUA + pointsToWin + ChatColor.YELLOW + ")" + "!");
+    }
 
     @Override
     public void onCustomRespawn(Player hurt, Player killer) {
@@ -114,7 +115,7 @@ public class Deathmatch extends Game {
 
         }
     }
-    @Override
+
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
         if (teamPoints >= pointsToWin) {

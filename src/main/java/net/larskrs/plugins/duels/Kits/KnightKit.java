@@ -24,9 +24,10 @@ public class KnightKit extends Kit {
         lhelm.setItemMeta(lhe);
         p.getEquipment().setHelmet(lhelm);
 
-        p.getInventory().setChestplate(new ItemStack(Material.IRON_CHESTPLATE));
-        p.getInventory().setLeggings(new ItemStack(Material.IRON_LEGGINGS));
+        p.getInventory().setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
+        p.getInventory().setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
         p.getInventory().setBoots(new ItemStack(Material.IRON_BOOTS));
+        p.getInventory().setItem(4, new ItemStack(Material.COOKED_BEEF, 4));
 
         p.getInventory().setItem(0, new ItemStack(Material.IRON_SWORD));
     }

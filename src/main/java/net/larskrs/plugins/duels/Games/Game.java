@@ -47,4 +47,5 @@ public abstract class Game implements Listener {
         HandlerList.unregisterAll(this);
     }
     public abstract void onCustomRespawn(Player hurt, Player killer);
+    public abstract void addPoint(Team team);
 }

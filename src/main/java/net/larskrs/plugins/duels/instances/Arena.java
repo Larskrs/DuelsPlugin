@@ -4,6 +4,7 @@ import com.google.common.collect.TreeMultimap;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.Games.Deathmatch;
+import net.larskrs.plugins.duels.Games.Fortress;
 import net.larskrs.plugins.duels.Games.Game;
 import net.larskrs.plugins.duels.Games.LastStanding;
 import net.larskrs.plugins.duels.Kits.ArcherKit;
@@ -61,6 +62,8 @@ public class Arena {
             this.game = new Deathmatch(duels, this);
         } else if (ConfigManager.getGameType(id).contains("LASTSTANDING")) {
             this.game = new LastStanding(duels, this);
+        } else if (ConfigManager.getGameType(id).contains("FORTRESS")) {
+            this.game = new Fortress(duels, this);
         }
 
     }
@@ -116,6 +119,8 @@ public class Arena {
                 this.game = new Deathmatch(duels, this);
             } else if (ConfigManager.getGameType(id).contains("LASTSTANDING")) {
                 this.game = new LastStanding(duels, this);
+            } else if (ConfigManager.getGameType(id).contains("FORTRESS")) {
+                this.game = new Fortress(duels, this);
             }
         }
 

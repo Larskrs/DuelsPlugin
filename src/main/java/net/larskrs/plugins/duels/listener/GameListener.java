@@ -4,6 +4,8 @@ import com.cryptomorin.xseries.XMaterial;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
+import net.larskrs.plugins.duels.Games.Deathmatch;
+import net.larskrs.plugins.duels.Games.Fortress;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Arena;
@@ -94,11 +96,29 @@ public class GameListener implements Listener {
     public void onSignClick(PlayerInteractEvent e) {
         if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock()) {
             if (StorageBlockTool.isStorageBlock(e.getClickedBlock())) {
-                if (duels.getArenaManager().getArena(e.getPlayer()) != null) {
+
+                Arena a = duels.getArenaManager().getArena(e.getPlayer());
+
+                if (a != null) {
                 e.setCancelled(true);
+
+                if (ConfigManager.getGameType(a.getId()).contains("FORTRESS") && a.getState() == GameState.LIVE) {
+                    a.getGame().addPoint(a.getTeam(e.getPlayer()));
+                    Fortress fortress = (Fortress) a.getGame();
+                    fortress.lootStorage(e.getPlayer(), e.getClickedBlock());
+                }
+
                 return;
                 }
+            }else {
+                if (e.getClickedBlock().getType().name().contains("DOOR")) {
+                    if (duels.getArenaManager().getArena(e.getPlayer()) != null) {
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
             }
+
         }
 
         if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock() && e.getClickedBlock().getType().equals(XMaterial.OAK_WALL_SIGN.parseMaterial()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
@@ -340,7 +360,7 @@ public class GameListener implements Listener {
                 if (a.getTeam(p) == team) {
                     p.sendMessage(ChatColor.RED + "You are already on this team!");
                 } else {
-                    if (a.getTeamCount(team) == 1) {
+                    if (a.getTeamCount(a.getTeam(p)) == 1) {
                         p.sendMessage(ChatColor.RED + "You can not leave the team, it will be empty!");
                         return;
 
