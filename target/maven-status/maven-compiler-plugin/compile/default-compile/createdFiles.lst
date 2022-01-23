@@ -1,4 +1,5 @@
 net\larskrs\plugins\duels\instances\Countdown.class
+net\larskrs\plugins\duels\tools\WorldLoaderTool.class
 net\larskrs\plugins\duels\listener\ConnectListener.class
 net\larskrs\plugins\duels\enums\KitType.class
 net\larskrs\plugins\duels\Duels.class
