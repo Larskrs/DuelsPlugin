@@ -57,5 +57,12 @@ public class KitsFile {
         
         saveFile();
     }
+    public static ItemStack getSerializedItemStack(String url) {
+          ItemStack i = new ItemStack(Material.getMaterial(modifyFile.get(url + ".type")));
+            i.setAmount(modifyFile.get(url + ".amount"));
+            i.setDisplayName(modifyFile.get(url + ".name"));
+        
+        return i;
+        }        
 
 }
