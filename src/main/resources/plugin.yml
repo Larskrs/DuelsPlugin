@@ -14,6 +14,6 @@ permissions:
   simpleduels.bypass.drop:
     description: bypass anti drop system.
     default: op
-  simpleduels.command.reload:
-    description: allows players to reload the config file. Admins...
+  simpleduels.admin:
+    description: allows players to admin command...
     default: op

@@ -1,6 +1,7 @@
 package net.larskrs.plugins.duels.commands;
 
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.Files.KitsFile;
 import net.larskrs.plugins.duels.GUI.KitGUI;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
 import net.larskrs.plugins.duels.enums.GameState;
@@ -52,6 +53,10 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                 } else {
                     new KitGUI(a , p);
                 }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("setKit")) {
+                KitsFile.setKit(args[1], p.getInventory());
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("getKit")) {
+                KitsFile.getKit(args[1], p);
             } else if (args.length == 1 && args[0].equalsIgnoreCase("leave")) {
                 if (duels.getArenaManager().getArena(p) != null) {
                     duels.getArenaManager().getArena(p).removePlayer(p);
@@ -117,7 +122,7 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
             options.add("team");
             options.add("kit");
             options.add("leave");
-            if (sender.hasPermission("simpleduels.command.reload")) {
+            if (sender.hasPermission("simpleduels.admin")) {
                 options.add("reload");
             }
 
