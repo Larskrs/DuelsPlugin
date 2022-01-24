@@ -59,8 +59,16 @@ public class KitsFile {
     }
     public static ItemStack getSerializedItemStack(String url) {
           ItemStack i = new ItemStack(Material.getMaterial(modifyFile.get(url + ".type")));
+          ItemMeta m = i.getItemMeta();
             i.setAmount(modifyFile.get(url + ".amount"));
-            i.setDisplayName(modifyFile.get(url + ".name"));
+            m.setDisplayName(modifyFile.get(url + ".name"));
+        
+        
+        List<String> enchants = modifyFile.getStringList(url + ".enchantments");
+        for (String s : enchants) {
+            String[] split = s.Split("=", 2);
+            m.addEnchant(Enchantment.getByName(split[0]), Integer.parseInt(split[1]));
+        }
         
         return i;
         }        
