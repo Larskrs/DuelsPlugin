@@ -71,6 +71,15 @@ public class KitsFile {
         }
         
         return i;
-        }        
+        } 
+    public static void registerKit(String name, String[] description, String display, ItemStack[] contents, ItemStack[] armourContents) {
+        
+        int i;
+        for (ItemStack content : contents) {
+            serializeItemStack(content, )
+                i++;
+        }
+        
+    }
 
 }
