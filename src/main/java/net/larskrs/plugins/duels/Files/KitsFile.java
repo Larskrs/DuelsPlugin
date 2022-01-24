@@ -45,8 +45,17 @@ public class KitsFile {
             e.printStackTrace();
         }
     }
-
-
-
+    public static void serializeItemStack(ItemStack item, String url) {
+        modifyFile.set(url + ".type", item.getType());
+        modifyFile.set(url + ".amount", item.getAmount());
+        modifyFile.set(url + ".name", item.getDisplayName());
+        List<String> enchants = new ArrayList<>();
+        for (String s : item.getEnchantments()) { 
+                enchants.add(s);
+             }
+        modifyFile.set(url + ".enchantments", enchants);
+        
+        saveFile();
+    }
 
 }
