@@ -1,13 +1,14 @@
 package net.larskrs.plugins.duels.commands;
 
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.instances.CustomKit;
 import net.larskrs.plugins.duels.Files.KitsFile;
 import net.larskrs.plugins.duels.GUI.KitGUI;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
-import net.larskrs.plugins.duels.managers.ArenaManager;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DuelCommand implements CommandExecutor, TabCompleter {
@@ -53,10 +53,21 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                 } else {
                     new KitGUI(a , p);
                 }
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("setKit")) {
-                KitsFile.setKit(args[1], p.getInventory());
+            } else if (args.length > 3 && args[0].equalsIgnoreCase("setKit")) {
+
+                StringBuilder builder = new StringBuilder();
+                for (int i = 3; i < args.length; i++) {
+                    builder.append(args[i]).append(" ");
+                }
+                String msg = builder.toString();
+                KitsFile.registerKit(ChatColor.stripColor(args[1]), msg, ChatColor.translateAlternateColorCodes('&', args[1]), p.getInventory(), Material.getMaterial(args[2]));
+
             } else if (args.length == 2 && args[0].equalsIgnoreCase("getKit")) {
-                KitsFile.getKit(args[1], p);
+                CustomKit kit = KitsFile.getKit(args[1]);
+                kit.giveKit(p);
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("getItem")) {
+                p.getInventory().addItem(KitsFile.getSerializedItemStack(args[1]));
+
             } else if (args.length == 1 && args[0].equalsIgnoreCase("leave")) {
                 if (duels.getArenaManager().getArena(p) != null) {
                     duels.getArenaManager().getArena(p).removePlayer(p);

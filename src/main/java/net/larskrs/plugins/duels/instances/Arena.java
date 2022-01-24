@@ -2,18 +2,13 @@ package net.larskrs.plugins.duels.instances;
 
 import com.google.common.collect.TreeMultimap;
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.Files.KitsFile;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.Games.Deathmatch;
 import net.larskrs.plugins.duels.Games.Fortress;
 import net.larskrs.plugins.duels.Games.Game;
 import net.larskrs.plugins.duels.Games.LastStanding;
-import net.larskrs.plugins.duels.Kits.ArcherKit;
-import net.larskrs.plugins.duels.Kits.KnightKit;
-import net.larskrs.plugins.duels.Kits.PearlerKit;
-import net.larskrs.plugins.duels.Kits.PranksterKit;
 import net.larskrs.plugins.duels.enums.GameState;
-import net.larskrs.plugins.duels.enums.KitType;
-import net.larskrs.plugins.duels.listener.RespawnCountdown;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.NametagManager;
 import net.larskrs.plugins.duels.managers.Team;
@@ -26,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import javax.naming.Name;
 import java.util.*;
 
 public class Arena {
@@ -37,7 +31,7 @@ public class Arena {
     private Location spawn, sign;
 
     private List<UUID> players;
-    private HashMap<UUID, Kit> kits;
+    private HashMap<UUID, CustomKit> kits;
     private HashMap<UUID, Team> teams;
     private GameState state;
     private Countdown countdown;
@@ -148,10 +142,13 @@ public class Arena {
 
 /* Player */
     public void addPlayer(Player player) {
-        KitType kitType = PlayerDataFile.getLastSavedKit(player.getUniqueId());
-        if (kitType == null) { kitType = KitType.KNIGHT; }
-        setKit(player.getUniqueId(), kitType);
-
+        CustomKit lastSavedKit = PlayerDataFile.getLastSavedKit(player.getUniqueId());
+        if (lastSavedKit == null) {
+            Random rand = new Random();
+            lastSavedKit = KitsFile.getKits().get(rand.nextInt(KitsFile.getKits().size()));
+            setKit(player.getUniqueId(), lastSavedKit);
+        }
+            setKit(player.getUniqueId(), lastSavedKit);
 
         players.add(player.getUniqueId());
         player.teleport(this.spawn);
@@ -232,19 +229,10 @@ public class Arena {
     public Team getTeam(Player p) {
         return teams.get(p.getUniqueId());
     }
-    public void setKit(UUID uuid, KitType type) {
+    public void setKit(UUID uuid, CustomKit type) {
         removeKit(uuid);
-        if (type == KitType.KNIGHT) {
-            kits.put(uuid, new KnightKit(type, uuid));
-        } else if (type == KitType.ARCHER){
-            kits.put(uuid, new ArcherKit(type, uuid));
-        } else if (type == KitType.PEARLER) {
-            kits.put(uuid, new PearlerKit(type, uuid));
-        } else if (type == KitType.PRANKSTER) {
-            kits.put(uuid, new PranksterKit(type, uuid));
-        }
 
-        PlayerDataFile.getConfig().set(Bukkit.getPlayer(uuid).getName() + ".kit", type.name());
+        PlayerDataFile.getConfig().set(uuid + ".kit", type.getName());
         PlayerDataFile.saveFile();
     }
     public void removeKit(UUID uuid) {
@@ -253,11 +241,11 @@ public class Arena {
             kits.remove(uuid);
         }
     }
-    public HashMap<UUID, Kit> getKits() {
+    public HashMap<UUID, CustomKit> getKits() {
         return kits;
     }
-    public KitType getKit(Player player) {
-        return kits.containsKey(player.getUniqueId()) ? kits.get(player.getUniqueId()).getType() : null;
+    public CustomKit getKit(Player player) {
+        return kits.getOrDefault(player.getUniqueId(), null);
     }
     public void respawnPlayer(UUID uuid) {
 
@@ -265,7 +253,7 @@ public class Arena {
         Arena a = duels.getArenaManager().getArena(p);
 
         p.teleport(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
-        a.getKits().get(p.getUniqueId()).onStart(p);
+        a.getKits().get(p.getUniqueId()).giveKit(p);
         p.setFoodLevel(20);
         p.setHealth(p.getMaxHealth());
         p.setGameMode(GameMode.SURVIVAL);

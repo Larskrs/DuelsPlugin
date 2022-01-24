@@ -2,31 +2,25 @@ package net.larskrs.plugins.duels.listener;
 
 import com.cryptomorin.xseries.XMaterial;
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.instances.CustomKit;
+import net.larskrs.plugins.duels.Files.KitsFile;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
-import net.larskrs.plugins.duels.Games.Deathmatch;
 import net.larskrs.plugins.duels.Games.Fortress;
 import net.larskrs.plugins.duels.enums.GameState;
-import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Arena;
-import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import net.larskrs.plugins.duels.tools.StorageBlockTool;
-import net.minecraft.network.protocol.game.PacketPlayOutCamera;
-import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -36,7 +30,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -64,7 +57,7 @@ public class GameListener implements Listener {
             Player p = (Player) e.getPlayer();
             Arena a = Duels.getInstance().getArenaManager().getArena(p);
             e.setRespawnLocation(ConfigManager.getTeamSpawn(duels.getArenaManager().getArena(p).getId(), a.getTeam(p)));
-            a.getKits().get(p.getUniqueId()).onStart(p);
+            a.getKits().get(p.getUniqueId()).giveKit(p);
         } else {
 
             e.setRespawnLocation(ConfigManager.getLobbySpawnLocation());
@@ -374,11 +367,12 @@ public class GameListener implements Listener {
 
             e.setCancelled(true);
         } else if (e.getClickedInventory() != null && e.getCurrentItem() != null && e.getView().getTitle().contains("Kit Selection")) {
-            KitType type = KitType.valueOf(e.getCurrentItem().getItemMeta().getLocalizedName());
+            CustomKit type = KitsFile.getKit(e.getCurrentItem().getItemMeta().getLocalizedName());
             Player p = (Player) e.getWhoClicked();
             Arena a = Duels.getInstance().getArenaManager().getArena(p);
 
-                KitType currentKit = PlayerDataFile.getLastSavedKit(p.getUniqueId());
+                CustomKit currentKit = PlayerDataFile.getLastSavedKit(p.getUniqueId());
+
                 if (currentKit != null && currentKit == type) {
                     p.sendMessage(ChatColor.RED + "You already have this kit equipped.");
                 } else {
@@ -386,7 +380,7 @@ public class GameListener implements Listener {
                         p.sendMessage(ChatColor.YELLOW + "You have " + ChatColor.GREEN + "equipped " + ChatColor.YELLOW + "the " + type.getDisplay() + " kit!");
                         a.setKit(p.getUniqueId(), type);
                     } else {
-                        PlayerDataFile.getConfig().set(Bukkit.getPlayer(p.getUniqueId()).getName() + ".kit", type.name());
+                        PlayerDataFile.getConfig().set(p.getUniqueId() + ".kit", type.getName());
                         PlayerDataFile.saveFile();
                         p.sendMessage(ChatColor.YELLOW + "You have " + ChatColor.GREEN + "equipped " + ChatColor.YELLOW + "the " + type.getDisplay() + " kit!");
                     }

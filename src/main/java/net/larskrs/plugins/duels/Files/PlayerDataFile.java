@@ -1,10 +1,10 @@
 package net.larskrs.plugins.duels.Files;
 
-import jdk.jfr.internal.LogLevel;
 import net.larskrs.plugins.duels.Duels;
-import net.larskrs.plugins.duels.enums.KitType;
+import net.larskrs.plugins.duels.instances.CustomKit;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -58,9 +58,11 @@ public class PlayerDataFile {
     public static YamlConfiguration getConfig() {
         return modifyFile;
     }
-    public static KitType getLastSavedKit(UUID uuid) {
-        if (PlayerDataFile.getConfig().contains(Bukkit.getPlayer(uuid).getName() + ".kit")) {
-            return KitType.valueOf(PlayerDataFile.getConfig().getString(Bukkit.getPlayer(uuid).getName() + ".kit"));
+    public static CustomKit getLastSavedKit(UUID uuid) {
+        if (PlayerDataFile.getConfig().contains(uuid + ".kit")) {
+            CustomKit kit = KitsFile.getKit(modifyFile.getString(uuid.toString()));
+            kit.giveKit(Bukkit.getPlayer(uuid));
+            return kit;
         }
         return null;
     }

@@ -45,7 +45,7 @@ public class LastStanding extends Game {
 
         for (UUID uuid : arena.getPlayers()) {
             Player p = Bukkit.getPlayer(uuid);
-            arena.getKits().get(uuid).onStart(p);
+            arena.getKits().get(uuid).giveKit(p);
             p.closeInventory();
             p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
 

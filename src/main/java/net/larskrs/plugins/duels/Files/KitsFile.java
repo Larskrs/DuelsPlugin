@@ -1,13 +1,21 @@
 package net.larskrs.plugins.duels.Files;
 
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.instances.CustomKit;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KitsFile {
 
@@ -46,40 +54,95 @@ public class KitsFile {
         }
     }
     public static void serializeItemStack(ItemStack item, String url) {
-        modifyFile.set(url + ".type", item.getType());
+
+        modifyFile.set(url + ".type", item.getType().name());
         modifyFile.set(url + ".amount", item.getAmount());
-        modifyFile.set(url + ".name", item.getDisplayName());
+        if (item.getItemMeta() != null) {modifyFile.set(url + ".name", item.getItemMeta().getDisplayName());}
+
         List<String> enchants = new ArrayList<>();
-        for (String s : item.getEnchantments()) { 
-                enchants.add(s);
+        for (Enchantment e : item.getEnchantments().keySet()) {
+                enchants.add(e.getName() + "=" + item.getEnchantmentLevel(e));
              }
         modifyFile.set(url + ".enchantments", enchants);
         
         saveFile();
     }
     public static ItemStack getSerializedItemStack(String url) {
-          ItemStack i = new ItemStack(Material.getMaterial(modifyFile.get(url + ".type")));
-          ItemMeta m = i.getItemMeta();
-            i.setAmount(modifyFile.get(url + ".amount"));
-            m.setDisplayName(modifyFile.get(url + ".name"));
-        
-        
-        List<String> enchants = modifyFile.getStringList(url + ".enchantments");
-        for (String s : enchants) {
-            String[] split = s.Split("=", 2);
-            m.addEnchant(Enchantment.getByName(split[0]), Integer.parseInt(split[1]));
+        ItemStack i = new ItemStack(Material.getMaterial(modifyFile.getString(url + ".type")));
+        i.setAmount(modifyFile.getInt(url + ".amount"));
+
+        ItemMeta m = i.getItemMeta();
+        if (m != null) {
+            m.setDisplayName(modifyFile.getString(url + ".name"));
+
+
+            List<String> enchants = modifyFile.getStringList(url + ".enchantments");
+            for (String s : enchants) {
+                String[] split = s.split("=", 2);
+                m.addEnchant(Enchantment.getByName(split[0]), Integer.parseInt(split[1]), true);
+            }
+            i.setItemMeta(m);
+
         }
-        
         return i;
         } 
-    public static void registerKit(String name, String[] description, String display, ItemStack[] contents, ItemStack[] armourContents) {
-        
-        int i;
-        for (ItemStack content : contents) {
-            serializeItemStack(content, )
+    public static void registerKit(String name, String description, String display, PlayerInventory inv, Material icon) {
+
+                modifyFile.set("kits." + name, null);
+
+
+        saveFile();
+        try {
+            modifyFile.load(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+        int i = 0;
+        for (ItemStack content : inv.getContents()) {
+            if (content != null) {
+            serializeItemStack(content, "kits." + name + "." + i);
+            } else {
+                serializeItemStack(new ItemStack(Material.AIR), "kits." + name + "." + i);
+            }
                 i++;
         }
+        modifyFile.set("kits." + name + ".options.description", description);
+        modifyFile.set("kits." + name + ".options.display", display);
+        modifyFile.set("kits." + name + ".options.icon", icon.name());
+
+        saveFile();
         
+    }
+    public static CustomKit getKit(String name) {
+        CustomKit kit = new CustomKit(name, Material.getMaterial(modifyFile.getString("kits." + name + ".options.icon")));
+
+        List<ItemStack> contents = new ArrayList<>();
+        for (String s : modifyFile.getConfigurationSection("kits." + name).getKeys(false)) {
+            if (!s.equalsIgnoreCase("options")) {
+                System.out.println(modifyFile.getString("kits." + name + "." + s));
+                contents.add(getSerializedItemStack("kits." + name + "." + s));
+            }
+        }
+        ItemStack[] contentsArray = contents.toArray(new ItemStack[0]);
+        kit.setContents(contentsArray);
+        kit.setDescription(ChatColor.translateAlternateColorCodes('&', modifyFile.getString("kits." + name + ".options.description")));
+        kit.setDisplay(modifyFile.getString("kits." + name + ".options.display"));
+        return kit;
+    }
+
+    public static List<CustomKit> getKits() {
+        List<CustomKit> kits = new ArrayList<>();
+
+        for (String s : modifyFile.getConfigurationSection("kits").getKeys(false)) {
+            CustomKit kit = getKit(s);
+            if (kit != null) {
+            kits.add(kit);
+            }
+        }
+
+        return kits;
     }
 
 }
