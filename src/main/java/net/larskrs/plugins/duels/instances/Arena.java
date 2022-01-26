@@ -146,9 +146,10 @@ public class Arena {
         if (lastSavedKit == null) {
             Random rand = new Random();
             lastSavedKit = KitsFile.getKits().get(rand.nextInt(KitsFile.getKits().size()));
-            setKit(player.getUniqueId(), lastSavedKit);
+            player.sendMessage("Random Kit Has Been Equipped!");
         }
             setKit(player.getUniqueId(), lastSavedKit);
+
 
         players.add(player.getUniqueId());
         player.teleport(this.spawn);
@@ -245,7 +246,7 @@ public class Arena {
         return kits;
     }
     public CustomKit getKit(Player player) {
-        return kits.getOrDefault(player.getUniqueId(), null);
+        return kits.get(player.getUniqueId());
     }
     public void respawnPlayer(UUID uuid) {
 

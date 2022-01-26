@@ -121,7 +121,6 @@ public class KitsFile {
         List<ItemStack> contents = new ArrayList<>();
         for (String s : modifyFile.getConfigurationSection("kits." + name).getKeys(false)) {
             if (!s.equalsIgnoreCase("options")) {
-                System.out.println(modifyFile.getString("kits." + name + "." + s));
                 contents.add(getSerializedItemStack("kits." + name + "." + s));
             }
         }

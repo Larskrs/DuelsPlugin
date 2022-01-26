@@ -28,10 +28,10 @@ public class KitGUI {
             ArrayList<String> islore = new ArrayList<>();
 
             if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) != null) {
-                if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) == kit) {
+                if (PlayerDataFile.getLastSavedKit(p.getUniqueId()).getName().equalsIgnoreCase(kit.getName())) {
                     isMeta.addEnchant(Enchantment.DURABILITY, 1, true);
-                    isMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
-                    islore.add(ChatColor.YELLOW + "(Equipped)");
+                   isMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+                   islore.add(ChatColor.YELLOW + "(Equipped)");
                 }
             }
             islore.addAll(Arrays.asList(kit.getDescription())); // Adds all lore from description.
