@@ -102,8 +102,9 @@ public class Arena {
                 }
                 players.clear();
                 teams.clear();
+                kits.clear();
             }
-            kits.clear();
+            
             sendTitle("", ""); //Resets the title to instantly hide.
             countdown.cancel();
             countdown = new Countdown(duels, this);
@@ -170,7 +171,7 @@ public class Arena {
         updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(),  "Players: " + players.size());
 
         //if (state == GameState.RECRUITING && players.size() >= ConfigManager.getRequiredPlayers() ) {
-        if (players.size() >= ConfigManager.getRequiredPlayers()) {
+        if (players.size() >= ConfigManager.getRequiredPlayers() && state.equals(GameState.RECRUITING)) {
             countdown.start();
         }
     }
