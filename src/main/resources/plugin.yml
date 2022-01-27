@@ -1,4 +1,4 @@
-name: Duels
+name: SimpleDuels
 version: '${project.version}'
 main: net.larskrs.plugins.duels.Duels
 api-version: 1.18

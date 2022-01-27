@@ -64,10 +64,10 @@ public class Arena {
 
     private ArenaOptions loadOptions() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "loading... arena-options");
-        ArenaOptions o = new ArenaOptions();
-        o.GameType = duels.getConfig().getString("arenas." + getId() + ".options.game-type");
+        ArenaOptions o = new ArenaOptions(this, duels.getConfig().getString("arenas." + getId() + ".options.game-type"), duels.getConfig().getInt("arenas." + getId() + ".options.points-to-win"), false);
+        o.type = duels.getConfig().getString("arenas." + getId() + ".options.game-type");
         o.winAmount = duels.getConfig().getInt("arenas." + getId() + ".options.points-to-win");
-        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "arena info: " + o.GameType + " " + o.winAmount);
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "arena info: " + o.type + " " + o.winAmount);
 
         return o;
     }
@@ -144,6 +144,7 @@ public class Arena {
 /* Player */
     public void addPlayer(Player player) {
         CustomKit lastSavedKit = PlayerDataFile.getLastSavedKit(player.getUniqueId());
+        player.sendMessage("default kit has been equipped.");
         if (lastSavedKit == null) {
             Random rand = new Random();
             lastSavedKit = KitsFile.getKits().get(rand.nextInt(KitsFile.getKits().size()));
@@ -174,6 +175,7 @@ public class Arena {
         if (players.size() >= ConfigManager.getRequiredPlayers() && state.equals(GameState.RECRUITING)) {
             countdown.start();
         }
+
     }
     public void removePlayer(Player player) {
 
@@ -236,6 +238,7 @@ public class Arena {
 
         PlayerDataFile.getConfig().set(uuid + ".kit", type.getName());
         PlayerDataFile.saveFile();
+        kits.put(uuid, type);
     }
     public void removeKit(UUID uuid) {
         if (kits.containsKey(uuid)) {

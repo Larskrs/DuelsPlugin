@@ -55,19 +55,25 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                 }
             } else if (args.length > 3 && args[0].equalsIgnoreCase("setKit")) {
 
+                if (p.hasPermission("simpleduels.admin")) {
+
                 StringBuilder builder = new StringBuilder();
                 for (int i = 3; i < args.length; i++) {
                     builder.append(args[i]).append(" ");
                 }
                 String msg = builder.toString();
                 KitsFile.registerKit(ChatColor.stripColor(args[1]), msg, ChatColor.translateAlternateColorCodes('&', args[1]), p.getInventory(), Material.getMaterial(args[2]));
+                } else {
+                    p.sendMessage(ChatColor.RED + "This command can only be run by staff! please try a different thang.");
+                }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("removeKit")) {
 
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("getKit")) {
-                CustomKit kit = KitsFile.getKit(args[1]);
-                kit.giveKit(p);
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("getItem")) {
-                p.getInventory().addItem(KitsFile.getSerializedItemStack(args[1]));
+                if (p.hasPermission("simpleduels.admin")) {
 
+                    KitsFile.removeKit(args[1]);
+                } else {
+                    p.sendMessage(ChatColor.RED + "This command can only be run by staff! please try a different thang.");
+                }
             } else if (args.length == 1 && args[0].equalsIgnoreCase("leave")) {
                 if (duels.getArenaManager().getArena(p) != null) {
                     duels.getArenaManager().getArena(p).removePlayer(p);
@@ -76,8 +82,12 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                     p.sendMessage(ChatColor.RED + "You are not in a match!");
                 }
             } else if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {
-                duels.reloadConfig();
-                p.sendMessage(ChatColor.GREEN + "Reloaded config file :)");
+                if (p.hasPermission("simpleduels.admin")) {
+                    duels.reloadConfig();
+                    p.sendMessage(ChatColor.GREEN + "Reloaded config file :)");
+                } else {
+                    p.sendMessage(ChatColor.RED + "This command can only be run by staff! please try a different thang.");
+                }
             } else if (args.length >= 1 && args[0].equalsIgnoreCase("join")) {
                 if (duels.getArenaManager().getArena(p) != null) {
                     p.sendMessage(ChatColor.RED + "You are already in a game, do '/duel leave' first!");
@@ -116,11 +126,27 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
             } else {
                 // HELP
                 p.sendMessage(ChatColor.RED + "Invalid Usage! these are your commands:");
+                getHelp(p, p.hasPermission("simpleduels.admin"));
             }
         } else {
             sender.sendMessage(ChatColor.RED + "This command can only be run by players :(");
         }
         return false;
+    }
+
+    private void getHelp(Player p, boolean hasPermission) {
+            p.sendMessage("§6§l§m|------------|§c§l D U E L S §6§l§m|------------|");
+        p.sendMessage(ChatColor.GREEN +"  - / kit " + ChatColor.GRAY + ": let's you select a kit.");
+        p.sendMessage(ChatColor.GREEN +"  - / join <id> " + ChatColor.GRAY + ": let's you join a game.");
+        p.sendMessage(ChatColor.GREEN +"  - / leave " + ChatColor.GRAY + ": let's you leave a game.");
+        p.sendMessage(ChatColor.GREEN +"  - / team " + ChatColor.GRAY + ": let's you switch team, only loosers bail on their team.");
+        if (hasPermission) {
+            p.sendMessage(ChatColor.GOLD +"  - / reload " + ChatColor.GRAY + ": let's you reload the plugin.");
+            p.sendMessage(ChatColor.GOLD +"  - / setkit <name> <icon> <description> " + ChatColor.GRAY + ": let's you register or change kits.");
+            p.sendMessage(ChatColor.GOLD +"  - / removekit <name> " + ChatColor.GRAY + ": let's you remove kits.");
+        }
+        p.sendMessage("§6§l§m|----------------------------------|");
+
     }
 
     @Override
@@ -135,6 +161,7 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
             options.add("leave");
             if (sender.hasPermission("simpleduels.admin")) {
                 options.add("reload");
+                options.add("setkit");
             }
 
             return StringUtil.copyPartialMatches(args[0], options, new ArrayList<>());

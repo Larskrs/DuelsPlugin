@@ -52,6 +52,7 @@ public class KitsFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Bukkit.getConsoleSender().sendMessage("saving kit.yml");
     }
     public static void serializeItemStack(ItemStack item, String url) {
 
@@ -90,15 +91,6 @@ public class KitsFile {
 
                 modifyFile.set("kits." + name, null);
 
-
-        saveFile();
-        try {
-            modifyFile.load(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
         int i = 0;
         for (ItemStack content : inv.getContents()) {
             if (content != null) {
@@ -142,6 +134,11 @@ public class KitsFile {
         }
 
         return kits;
+    }
+    public static void removeKit(String name) {
+        modifyFile.set("kits." + name, null);
+        Bukkit.getConsoleSender().sendMessage("§cremoving kit, " + name);
+        saveFile();
     }
 
 }

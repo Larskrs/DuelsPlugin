@@ -372,6 +372,8 @@ public class GameListener implements Listener {
             Arena a = Duels.getInstance().getArenaManager().getArena(p);
 
                 CustomKit currentKit = PlayerDataFile.getLastSavedKit(p.getUniqueId());
+                    e.setCancelled(true);
+
 
                 if (currentKit != null && currentKit == type) {
                     p.sendMessage(ChatColor.RED + "You already have this kit equipped.");
@@ -388,7 +390,6 @@ public class GameListener implements Listener {
                 p.closeInventory();
 
 
-            e.setCancelled(true);
         }
     }
 }
