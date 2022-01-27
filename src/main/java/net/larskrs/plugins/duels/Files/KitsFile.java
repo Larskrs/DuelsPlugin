@@ -11,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,6 +68,9 @@ public class KitsFile {
         modifyFile.set(url + ".enchantments", enchants);
         
         saveFile();
+    }
+    public static void serializePotion(PotionMeta potionMeta, String url) {
+
     }
     public static ItemStack getSerializedItemStack(String url) {
         ItemStack i = new ItemStack(Material.getMaterial(modifyFile.getString(url + ".type")));

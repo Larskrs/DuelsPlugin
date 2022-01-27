@@ -60,8 +60,8 @@ public class PlayerDataFile {
     }
     public static CustomKit getLastSavedKit(UUID uuid) {
         if (PlayerDataFile.getConfig().contains(uuid + ".kit")) {
-            CustomKit kit = KitsFile.getKit(modifyFile.getString(uuid + ".kit"));
-            return kit;
+            return KitsFile.getKit(modifyFile.getString(uuid + ".kit"));
+
         } else {
         System.out.println("Failed to get info from: " + modifyFile.getString(uuid.toString()));
         }

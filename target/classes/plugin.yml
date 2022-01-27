@@ -1,5 +1,5 @@
-name: Duels
-version: '1.3.0'
+name: SimpleDuels
+version: '1.4.0'
 main: net.larskrs.plugins.duels.Duels
 api-version: 1.18
 description: Duels plugin
