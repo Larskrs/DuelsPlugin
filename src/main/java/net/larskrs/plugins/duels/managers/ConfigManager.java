@@ -63,12 +63,28 @@ public class ConfigManager {
          (float) config.getDouble(configLocation + ".pitch")
         );
     }
+    public static void serializeLocation(String url, Location loc) {
+        config.set(url + ".world", loc.getWorld().getName());
+        config.set(url + ".x", loc.getX());
+        config.set(url + ".y", loc.getY());
+        config.set(url + ".z", loc.getZ());
+        config.set(url + ".yaw", loc.getYaw());
+        config.set(url + ".pitch", loc.getPitch());
+        duels.saveConfig();
+        duels.reloadConfig();
+    }
     public static String getGameType (int id) {
         return config.getString("arenas." + id + ".options.game-type");
     }
     public static int getGamePointsToWin (int id) {
         return config.getInt("arenas." + id + ".options.points-to-win");
     }
-    public static String getArenaName(int id) { return ChatColor.translateAlternateColorCodes('&', config.getString("arenas." + id + ".options.name"));}
+    public static String getArenaName(int id) { return config.getString("arenas." + id + ".options.name");}
     public static void setArenaName(int id, String name) {  config.set("arenas." + id + ".options.name", name); duels.saveConfig(); duels.reloadConfig(); }
+    public static void setArenaLobbyLocation(int id, Location location) {
+        serializeLocation("arenas." + id + ".spawn", location);
+    }
+    public static void setArenaTeamSpawn(int id, Team team, Location location) {
+        serializeLocation("arenas." + id + ".teams." + team.name() + ".spawn", location);
+    }
 }

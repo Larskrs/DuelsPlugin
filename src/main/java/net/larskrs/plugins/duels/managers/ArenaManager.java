@@ -38,6 +38,16 @@ public class ArenaManager {
         }
         return null;
     }
+    public Arena getArena (String name) {
+        for (Arena arena : arenas) {
+            System.out.println(arena.getName() + " ... " + name);
+            if (arena.getName().equalsIgnoreCase(name)) {
+                System.out.println(arena.getName() + " == " + name);
+                return arena;
+            }
+        }
+        return null;
+    }
     public Arena getArena(int id) {
         for (Arena arena : arenas) {
             if (arena.getId() == id) {

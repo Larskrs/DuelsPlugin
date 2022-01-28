@@ -269,5 +269,5 @@ public class Arena {
     public Location getSignLocation() {
         return sign;
     }
-    public String getName () {return name;}
+    public String getName () {return ConfigManager.getArenaName(id);}
 }
