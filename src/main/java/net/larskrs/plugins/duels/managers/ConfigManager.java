@@ -13,8 +13,10 @@ import java.util.Objects;
 public class ConfigManager {
 
     private static FileConfiguration config;
+    private static Duels duels;
 
-    public static void setupConfig(Duels duels) {
+    public static void setupConfig(Duels main) {
+        duels = main;
         Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "loading... config.yml");
         ConfigManager.config = duels.getConfig();
         duels.saveDefaultConfig();
@@ -67,4 +69,6 @@ public class ConfigManager {
     public static int getGamePointsToWin (int id) {
         return config.getInt("arenas." + id + ".options.points-to-win");
     }
+    public static String getArenaName(int id) { return ChatColor.translateAlternateColorCodes('&', config.getString("arenas." + id + ".options.name"));}
+    public static void setArenaName(int id, String name) {  config.set("arenas." + id + ".options.name", name); duels.saveConfig(); duels.reloadConfig(); }
 }

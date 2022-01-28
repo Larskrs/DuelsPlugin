@@ -38,6 +38,7 @@ public class Arena {
     private Game game;
     private Scoreboard scoreboard;
     private ArenaOptions options;
+    public String name;
 
     public Arena(Duels duels, int id, Location spawn) {
         this.duels = duels;
@@ -59,6 +60,7 @@ public class Arena {
         } else if (ConfigManager.getGameType(id).contains("FORTRESS")) {
             this.game = new Fortress(duels, this);
         }
+        this.name = ConfigManager.getArenaName(id);
 
     }
 
@@ -267,4 +269,5 @@ public class Arena {
     public Location getSignLocation() {
         return sign;
     }
+    public String getName () {return name;}
 }

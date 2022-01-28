@@ -1,11 +1,14 @@
 package net.larskrs.plugins.duels.GUI;
 
+import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.instances.CustomKit;
 import net.larskrs.plugins.duels.Files.KitsFile;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.managers.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -17,25 +20,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ArenaGUI {
-    public ArenaGUI (Arena a, Player p) {
+    public ArenaGUI (Player p) {
         Inventory gui = Bukkit.createInventory(null, 9, ChatColor.DARK_GRAY + "Kit Selection");
 
-        for (CustomKit kit : KitsFile.getKits()) {
-            ItemStack is = new ItemStack(kit.getIcon());
+        for (Arena a : Duels.getInstance().getArenaManager().getArenas()) {
+            ItemStack is = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
             ItemMeta isMeta = is.getItemMeta();
-            isMeta.setDisplayName(kit.getDisplay());
+            isMeta.setDisplayName(ConfigManager.getArenaName(a.getId()));
 
             ArrayList<String> islore = new ArrayList<>();
 
-            if (PlayerDataFile.getLastSavedKit(p.getUniqueId()) != null) {
-                if (PlayerDataFile.getLastSavedKit(p.getUniqueId()).getName().equalsIgnoreCase(kit.getName())) {
-                    isMeta.addEnchant(Enchantment.DURABILITY, 1, true);
-                   isMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
-                   islore.add(ChatColor.YELLOW + "(Equipped)");
-                }
-            }
-            islore.addAll(Arrays.asList(kit.getDescription())); // Adds all lore from description.
-            isMeta.setLocalizedName(kit.getName());
+            isMeta.setLocalizedName(a.getId() + "");
             isMeta.setLore(islore);
             is.setItemMeta(isMeta);
             gui.addItem(is);

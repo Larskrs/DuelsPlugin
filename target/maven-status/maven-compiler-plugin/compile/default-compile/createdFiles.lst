@@ -13,6 +13,7 @@ net\larskrs\plugins\duels\instances\Arena.class
 net\larskrs\plugins\duels\UpdateLoop.class
 net\larskrs\plugins\duels\instances\Kit.class
 net\larskrs\plugins\duels\managers\NametagManager.class
+net\larskrs\plugins\duels\GUI\ArenaGUI.class
 net\larskrs\plugins\duels\GUI\TeamGUI.class
 net\larskrs\plugins\duels\listener\RespawnCountdown.class
 net\larskrs\plugins\duels\GUI\KitGUI.class

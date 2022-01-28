@@ -1,12 +1,14 @@
 package net.larskrs.plugins.duels.commands;
 
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.GUI.ArenaGUI;
 import net.larskrs.plugins.duels.instances.CustomKit;
 import net.larskrs.plugins.duels.Files.KitsFile;
 import net.larskrs.plugins.duels.GUI.KitGUI;
 import net.larskrs.plugins.duels.GUI.TeamGUI;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.managers.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -34,7 +36,12 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
         if (sender instanceof Player) {
             Player p = (Player) sender;
 
-            if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
+                if (args.length == 3 && args[0].equalsIgnoreCase("setarenaname")) {
+                    Arena a = duels.getArenaManager().getArena(Integer.parseInt(args[1]));
+                    ConfigManager.setArenaName(a.getId(), args[2]);
+                    p.sendMessage(ChatColor.YELLOW + "You set the name of the arena to: " + args[2] + "!");
+                }
+           else if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
                 p.sendMessage(ChatColor.GREEN + "Here are the available arenas!");
                 for (Arena a : duels.getArenaManager().getArenas()) {
                     p.sendMessage(ChatColor.GRAY + " - " + "[" + ChatColor.RED + a.getState().name() + ChatColor.GRAY + "] " + a.getId() + ChatColor.GREEN + " /duel join " + a.getId());
@@ -97,6 +104,7 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
 
                 if (args.length == 1) {
                     p.sendMessage(ChatColor.RED + "Invalid Usage! You need to add an arena! /duel join <arena>");
+                    new ArenaGUI(p);
                 } else if (args.length == 2) {
 
                     int id;
@@ -144,6 +152,7 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
             p.sendMessage(ChatColor.GOLD +"  - / reload " + ChatColor.GRAY + ": let's you reload the plugin.");
             p.sendMessage(ChatColor.GOLD +"  - / setkit <name> <icon> <description> " + ChatColor.GRAY + ": let's you register or change kits.");
             p.sendMessage(ChatColor.GOLD +"  - / removekit <name> " + ChatColor.GRAY + ": let's you remove kits.");
+            p.sendMessage(ChatColor.GOLD +"  - / duel <id> setname " + ChatColor.GRAY + ": let's you set arena name.");
         }
         p.sendMessage("§6§l§m|----------------------------------|");
 
@@ -161,7 +170,9 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
             options.add("leave");
             if (sender.hasPermission("simpleduels.admin")) {
                 options.add("reload");
-                options.add("setkit");
+                options.add("setKit");
+                options.add("removeKit");
+                options.add("setArenaName");
             }
 
             return StringUtil.copyPartialMatches(args[0], options, new ArrayList<>());
