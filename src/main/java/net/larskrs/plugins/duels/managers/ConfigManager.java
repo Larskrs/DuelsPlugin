@@ -71,7 +71,6 @@ public class ConfigManager {
         config.set(url + ".yaw", loc.getYaw());
         config.set(url + ".pitch", loc.getPitch());
         duels.saveConfig();
-        duels.reloadConfig();
     }
     public static String getGameType (int id) {
         return config.getString("arenas." + id + ".options.game-type");
@@ -86,5 +85,12 @@ public class ConfigManager {
     }
     public static void setArenaTeamSpawn(int id, Team team, Location location) {
         serializeLocation("arenas." + id + ".teams." + team.name() + ".spawn", location);
+        duels.saveConfig();
+
+    }
+    public static void setArena(int id, String game) {
+        config.set("arenas." + id + ".options.game-type", game);
+        duels.saveConfig();
+
     }
 }

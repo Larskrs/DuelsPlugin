@@ -56,13 +56,5 @@ public class ArenaManager {
         }
         return null;
     }
-    public Arena getArena(Location sign) {
-        for ( Arena a: arenas) {
-            if (a.getSignLocation().equals(sign)) {
-                return a;
-            }
-        }
-        return null;
-    }
 
 }

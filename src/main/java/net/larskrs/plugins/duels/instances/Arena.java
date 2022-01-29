@@ -28,7 +28,7 @@ public class Arena {
 
     private Duels duels;
     private int id;
-    private Location spawn, sign;
+    private Location spawn;
 
     private List<UUID> players;
     private HashMap<UUID, CustomKit> kits;
@@ -44,7 +44,6 @@ public class Arena {
         this.duels = duels;
         this.id = id;
         this.spawn = spawn;
-        this.sign = ConfigManager.getLocation("arenas." + id + ".sign");
         ScoreboardManager sm = Bukkit.getScoreboardManager();
         scoreboard = sm.getNewScoreboard();
         setState(GameState.RECRUITING);
@@ -134,14 +133,7 @@ public class Arena {
             Bukkit.getPlayer(uuid).sendTitle(title, subtitle);
         }
     }
-    public void updateSign(String line1, String line2, String line3, String line4) {
-        Sign signBlock = (Sign) sign.getBlock().getState();
-        signBlock.setLine(0, line1);
-        signBlock.setLine(1, line2);
-        signBlock.setLine(2, line3);
-        signBlock.setLine(3, line4);
-        signBlock.update();
-    }
+
 
 /* Player */
     public void addPlayer(Player player) {
@@ -171,7 +163,6 @@ public class Arena {
         Team lowest = (Team) count.values().toArray()[0];
         setTeam(player, lowest);
 
-        updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(),  "Players: " + players.size());
 
         //if (state == GameState.RECRUITING && players.size() >= ConfigManager.getRequiredPlayers() ) {
         if (players.size() >= ConfigManager.getRequiredPlayers() && state.equals(GameState.RECRUITING)) {
@@ -202,12 +193,10 @@ public class Arena {
             this.reset(true);
             return;
         }
-        updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(), state == GameState.LIVE ? "Players: " + players.size() : "");
     }
     public void setState (GameState state) {
         this.state = state;
             // Update Arena Sign
-        updateSign(ChatColor.GOLD + "Arena " + id, "", state.name(), state == GameState.LIVE ? "Players: " + players.size() : "");
     }
     public void setTeam (Player player, Team team) {
         removeTeam(player);
@@ -266,8 +255,5 @@ public class Arena {
         p.setGameMode(GameMode.SURVIVAL);
     }
 
-    public Location getSignLocation() {
-        return sign;
-    }
     public String getName () {return ConfigManager.getArenaName(id);}
 }

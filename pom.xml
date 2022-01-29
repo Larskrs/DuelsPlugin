@@ -6,7 +6,7 @@
 
     <groupId>net.larskrs.plugins</groupId>
     <artifactId>duels</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.1</version>
     <packaging>jar</packaging>
 
     <name>Duels</name>
@@ -66,11 +66,6 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>com.github.cryptomorin</groupId>
-            <artifactId>XSeries</artifactId>
-            <version>8.5.0.1</version>
-        </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>

@@ -8,10 +8,12 @@ import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.LingeringPotion;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +71,42 @@ public class KitsFile {
         
         saveFile();
     }
-    public static void serializePotion(PotionMeta potionMeta, String url) {
+    public static void serializePotionItem(ItemStack item, String url) {
+        modifyFile.set(url + ".type", item.getType().name());
+        modifyFile.set(url + ".amount", item.getAmount());
+        if (item.getItemMeta() != null) {modifyFile.set(url + ".name", item.getItemMeta().getDisplayName());}
+
+        PotionMeta meta = (PotionMeta) item.getItemMeta();
+        PotionData pd = meta.getBasePotionData();
+        PotionType type = pd.getType();
+
+        List<String> effects = new ArrayList<>();
+
+            effects.add(type.name() + "=" + pd.isUpgraded() + "=" + pd.isExtended());
+
+        modifyFile.set(url + ".potion-effects", effects);
+
+        saveFile();
+    }
+    public static ItemStack getSerializedPotionItem(String url) {
+        ItemStack i = new ItemStack(Material.getMaterial(modifyFile.getString(url + ".type")));
+        i.setAmount(modifyFile.getInt(url + ".amount"));
+
+
+        PotionMeta m = (PotionMeta) i.getItemMeta();
+        if (m != null) {
+            m.setDisplayName(modifyFile.getString(url + ".name"));
+
+
+            List<String> effects = modifyFile.getStringList(url + ".potion-effects");
+            for (String s : effects) {
+                String[] split = s.split("=", 3);
+                m.setBasePotionData(new PotionData(PotionType.valueOf(split[0]), Boolean.parseBoolean(split[2]), Boolean.parseBoolean(split[1])));
+            }
+            i.setItemMeta(m);
+
+        }
+        return i;
 
     }
     public static ItemStack getSerializedItemStack(String url) {
@@ -98,7 +135,13 @@ public class KitsFile {
         int i = 0;
         for (ItemStack content : inv.getContents()) {
             if (content != null) {
-            serializeItemStack(content, "kits." + name + "." + i);
+
+                if (content.getItemMeta() instanceof PotionMeta) {
+                    serializePotionItem(content, "kits." + name + "." + i);
+                } else {
+                    serializeItemStack(content, "kits." + name + "." + i);
+                }
+
             } else {
                 serializeItemStack(new ItemStack(Material.AIR), "kits." + name + "." + i);
             }
@@ -117,7 +160,14 @@ public class KitsFile {
         List<ItemStack> contents = new ArrayList<>();
         for (String s : modifyFile.getConfigurationSection("kits." + name).getKeys(false)) {
             if (!s.equalsIgnoreCase("options")) {
+
+                System.out.println(modifyFile.getString("kits." + name + "." + s + ".type"));
+                if (modifyFile.getString("kits." + name + "." + s + ".type").contains("POTION")) {
+                    contents.add(getSerializedPotionItem("kits." + name + "." + s));
+                } else {
                 contents.add(getSerializedItemStack("kits." + name + "." + s));
+                }
+
             }
         }
         ItemStack[] contentsArray = contents.toArray(new ItemStack[0]);
@@ -142,6 +192,7 @@ public class KitsFile {
     public static void removeKit(String name) {
         modifyFile.set("kits." + name, null);
         Bukkit.getConsoleSender().sendMessage("§cremoving kit, " + name);
+        PlayerDataFile.clearData("kit");
         saveFile();
     }
 

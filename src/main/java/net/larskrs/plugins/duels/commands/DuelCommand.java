@@ -10,6 +10,7 @@ import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -48,6 +49,16 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                     ConfigManager.setArenaName(a.getId(), args[2]);
                     p.sendMessage(ChatColor.YELLOW + "You set the name of the arena to: " + args[2] + "!");
                 }
+
+            if (args.length == 2 && args[0].equalsIgnoreCase("getkit")) {
+
+                if (!p.hasPermission("simpleduels.admin")) {
+                    p.sendMessage(ChatColor.RED + "This command can only be run by staff! please try a different thang.");
+                    return false;
+                }
+
+                KitsFile.getKit(args[1]).giveKit(p);
+            }
             else if (args.length == 2 && args[0].equalsIgnoreCase("setarenalobby")) {
 
                     if (!p.hasPermission("simpleduels.admin")) {
@@ -105,6 +116,18 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                 } else {
                     p.sendMessage(ChatColor.RED + "This command can only be run by staff! please try a different thang.");
                 }
+            } else if (args.length == 3 && args[0].equalsIgnoreCase("setArena")) {
+
+                if (p.hasPermission("simpleduels.admin")) {
+
+                    ConfigManager.setArena(Integer.parseInt(args[1]), args[2]);
+                    ConfigManager.setArenaLobbyLocation(Integer.parseInt(args[1]), p.getLocation());
+                    p.sendMessage(ChatColor.YELLOW + "Set arena " + args[1] + " with " + args[2] + " as the gamemode! with your curent position as the lobby. now you get to set the other spawns!");
+                    p.sendMessage(ChatColor.GRAY + "remember to reload the plugin to make any changes.");
+
+                } else {
+                    p.sendMessage(ChatColor.RED + "This command can only be run by staff! please try a different thang.");
+                }
             } else if (args.length == 2 && args[0].equalsIgnoreCase("removeKit")) {
 
                 if (p.hasPermission("simpleduels.admin")) {
@@ -122,7 +145,7 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                 }
             } else if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {
                 if (p.hasPermission("simpleduels.admin")) {
-                    duels.reloadConfig();
+                    duels.reload();
                     p.sendMessage(ChatColor.GREEN + "Reloaded config file :)");
                 } else {
                     p.sendMessage(ChatColor.RED + "This command can only be run by staff! please try a different thang.");
@@ -168,7 +191,8 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
     }
 
     private void getHelp(Player p, boolean hasPermission) {
-            p.sendMessage("§6§l§m|------------|§c§l D U E L S §6§l§m|------------|");
+            p.sendMessage("§6§l§m|------------|§c§l D U E L S "  + " §6§l§m|------------|");
+        p.sendMessage("");
         p.sendMessage(ChatColor.GREEN +"  - /duel kit " + ChatColor.GRAY + ": let's you select a kit.");
         p.sendMessage(ChatColor.GREEN +"  - /duel join <id> " + ChatColor.GRAY + ": let's you join a game.");
         p.sendMessage(ChatColor.GREEN +"  - /duel leave " + ChatColor.GRAY + ": let's you leave a game.");
@@ -180,6 +204,8 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
             p.sendMessage(ChatColor.GOLD +"  - /duel setArenaName <id> " + ChatColor.GRAY + ": let's you set arena name.");
             p.sendMessage(ChatColor.GOLD +"  - /duel setArenaLobby <id> " + ChatColor.GRAY + ": let's you set arena lobby.");
             p.sendMessage(ChatColor.GOLD +"  - /duel setTeamSpawn <id> <team> " + ChatColor.GRAY + ": let's you set team spawn.");
+            p.sendMessage("");
+            p.sendMessage(ChatColor.GRAY + "Running version: " + Bukkit.getPluginManager().getPlugin("SimpleDuels").getDescription().getVersion());
         }
         p.sendMessage("§6§l§m|----------------------------------|");
 

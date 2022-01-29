@@ -67,6 +67,11 @@ public class PlayerDataFile {
         }
         return null;
     }
+    public static void clearData(String url) {
+        for (String s : modifyFile.getConfigurationSection("").getKeys(false)) {
+            modifyFile.set(s + "." + url, null);
+        }
+    }
 
 
 

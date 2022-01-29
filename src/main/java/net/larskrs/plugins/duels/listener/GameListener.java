@@ -1,6 +1,5 @@
 package net.larskrs.plugins.duels.listener;
 
-import com.cryptomorin.xseries.XMaterial;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.instances.CustomKit;
 import net.larskrs.plugins.duels.Files.KitsFile;
@@ -114,12 +113,6 @@ public class GameListener implements Listener {
 
         }
 
-        if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock() && e.getClickedBlock().getType().equals(XMaterial.OAK_WALL_SIGN.parseMaterial()) && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
-            Arena a = duels.getArenaManager().getArena(e.getClickedBlock().getLocation());
-            if (a != null) {
-                Bukkit.dispatchCommand(e.getPlayer(), "duel join " + a.getId());
-            }
-        }
     }
 
     @EventHandler

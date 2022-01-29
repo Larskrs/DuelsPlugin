@@ -1,6 +1,5 @@
 package net.larskrs.plugins.duels.Kits;
 
-import com.cryptomorin.xseries.XMaterial;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.enums.KitType;
 import net.larskrs.plugins.duels.instances.Kit;
