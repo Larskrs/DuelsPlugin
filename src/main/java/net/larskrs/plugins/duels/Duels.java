@@ -5,6 +5,7 @@ import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.commands.DuelCommand;
 import net.larskrs.plugins.duels.listener.ConnectListener;
 import net.larskrs.plugins.duels.listener.GameListener;
+import net.larskrs.plugins.duels.listener.ItemListener;
 import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.NametagManager;
@@ -45,6 +46,7 @@ public final class Duels extends JavaPlugin {
         gameListener = new GameListener(this);
         Bukkit.getPluginManager().registerEvents(gameListener, this);
         Bukkit.getPluginManager().registerEvents(new ConnectListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ItemListener(), this);
 
         getCommand("duel").setExecutor(new DuelCommand(this));
         getCommand("duel").setTabCompleter(new DuelCommand(this));

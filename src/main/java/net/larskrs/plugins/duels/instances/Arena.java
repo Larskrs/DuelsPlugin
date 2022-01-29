@@ -8,6 +8,7 @@ import net.larskrs.plugins.duels.Games.Deathmatch;
 import net.larskrs.plugins.duels.Games.Fortress;
 import net.larskrs.plugins.duels.Games.Game;
 import net.larskrs.plugins.duels.Games.LastStanding;
+import net.larskrs.plugins.duels.Kits.CountdownItems;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.NametagManager;
@@ -169,6 +170,8 @@ public class Arena {
             countdown.start();
         }
 
+        CountdownItems.onStart(player);
+
     }
     public void removePlayer(Player player) {
 
@@ -183,6 +186,7 @@ public class Arena {
         player.setFoodLevel(20);
         player.setGameMode(GameMode.SURVIVAL);
         NametagManager.removeTag(player);
+        player.getActivePotionEffects().clear();
 
         if (state == GameState.COUNTDOWN && players.size() < ConfigManager.getRequiredPlayers()) {
             sendMessage(ChatColor.RED + "Not enough players for game to start. :(");
