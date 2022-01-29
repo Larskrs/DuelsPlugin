@@ -3,6 +3,7 @@ C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\U
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\GUI\TeamGUI.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\PranksterKit.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\GameListener.java
+C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\ItemListener.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\KnightKit.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\commands\DuelCommand.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\ConfigManager.java
@@ -12,7 +13,6 @@ C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\i
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\Deathmatch.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Files\KitsFile.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\CustomKit.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\PearlerKit.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\Team.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\enums\KitType.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\RespawnCooldown.java
@@ -29,6 +29,7 @@ C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\l
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\enums\GameState.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\Arena.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\ArenaOptions.java
+C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\CountdownItems.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\tools\XEntityType.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Duels.java
 C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\NametagManager.java

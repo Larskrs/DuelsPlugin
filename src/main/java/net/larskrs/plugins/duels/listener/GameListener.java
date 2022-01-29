@@ -63,6 +63,7 @@ public class GameListener implements Listener {
         }
     }
 
+
     @EventHandler
     public void onPlayerHunger(FoodLevelChangeEvent e) {
         if (e.getEntity() instanceof Player) {
@@ -298,6 +299,7 @@ public class GameListener implements Listener {
             e.getPlayer().getInventory().removeItem(new ItemStack(Material.TNT, 1));
             return;
         }
+
 
         if (!e.getPlayer().hasPermission("simpleduels.bypass.build") || duels.getArenaManager().getArena(e.getPlayer()) != null) {
             e.setCancelled(true);

@@ -11,6 +11,7 @@ net\larskrs\plugins\duels\Files\PlayerDataFile.class
 net\larskrs\plugins\duels\listener\GameListener.class
 net\larskrs\plugins\duels\instances\Arena.class
 net\larskrs\plugins\duels\UpdateLoop.class
+net\larskrs\plugins\duels\listener\ItemListener.class
 net\larskrs\plugins\duels\instances\Kit.class
 net\larskrs\plugins\duels\managers\NametagManager.class
 net\larskrs\plugins\duels\GUI\ArenaGUI.class
@@ -26,8 +27,8 @@ net\larskrs\plugins\duels\tools\StorageBlockTool.class
 net\larskrs\plugins\duels\Files\KitsFile.class
 net\larskrs\plugins\duels\enums\GameState.class
 net\larskrs\plugins\duels\Games\Fortress.class
+net\larskrs\plugins\duels\Kits\CountdownItems.class
 net\larskrs\plugins\duels\commands\DuelCommand.class
 net\larskrs\plugins\duels\instances\ArenaOptions.class
 net\larskrs\plugins\duels\tools\XEntityType.class
 net\larskrs\plugins\duels\managers\ConfigManager.class
-net\larskrs\plugins\duels\Kits\PearlerKit.class

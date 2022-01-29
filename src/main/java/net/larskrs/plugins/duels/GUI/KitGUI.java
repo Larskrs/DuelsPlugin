@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 public class KitGUI {
     public KitGUI (Arena a, Player p) {
-        Inventory gui = Bukkit.createInventory(null, 9, ChatColor.DARK_GRAY + "Kit Selection");
+        Inventory gui = Bukkit.createInventory(null, 45, ChatColor.DARK_GRAY + "Kit Selection");
 
         for (CustomKit kit : KitsFile.getKits()) {
             ItemStack is = new ItemStack(kit.getIcon());

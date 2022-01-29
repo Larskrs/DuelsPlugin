@@ -16,9 +16,9 @@ public class CountdownItems{
 
     public static void onStart(Player p) {
         p.getInventory().clear();
-        ItemStack leaveItem = new ItemStack(Material.RED_BED, 1);
+        ItemStack leaveItem = new ItemStack(Material.RED_DYE, 1);
         ItemMeta leaveItemMeta = leaveItem.getItemMeta();
-        leaveItemMeta.setDisplayName(ChatColor.RED + "Leave");
+        leaveItemMeta.setDisplayName(ChatColor.RED.toString() + ChatColor.BOLD + "LEAVE");
         leaveItem.setItemMeta(leaveItemMeta);
         p.getInventory().setItem(8, leaveItem);
 
