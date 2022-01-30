@@ -1,5 +1,6 @@
 package net.larskrs.plugins.duels.Games;
 
+import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.managers.ConfigManager;
@@ -117,14 +118,16 @@ public class Deathmatch extends Game {
     @Override
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
-        if (teamPoints >= pointsToWin) {
+        if (teamPoints >= pointsToWin + 1) {
             arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
             for (UUID pl : arena.getPlayers()) {
                 if (arena.getTeam(Bukkit.getPlayer(pl)) == team) {
                     arena.sendMessage(ChatColor.GRAY + " - " + team.getDisplay() + " " + Bukkit.getPlayer(pl).getName());
+                    PlayerDataFile.addPlayerWin(Bukkit.getPlayer(pl), 1);
                 }
             }
             arena.reset(true);
+
         }
 
 

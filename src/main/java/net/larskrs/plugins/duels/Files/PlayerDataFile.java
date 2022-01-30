@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +71,15 @@ public class PlayerDataFile {
     public static void clearData(String url) {
         for (String s : modifyFile.getConfigurationSection("").getKeys(false)) {
             modifyFile.set(s + "." + url, null);
+            saveFile();
         }
+    }
+    public static int getPlayerWins(Player player) {
+        return modifyFile.getInt(player.getUniqueId() + ".wins", 0);
+    }
+    public static void addPlayerWin(Player player, int amount) {
+        modifyFile.set(player.getUniqueId() + ".wins", getPlayerWins(player) + amount);
+        saveFile();
     }
 
 

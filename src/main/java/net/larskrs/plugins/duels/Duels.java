@@ -9,6 +9,7 @@ import net.larskrs.plugins.duels.listener.ItemListener;
 import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.NametagManager;
+import net.larskrs.plugins.duels.placeholers.WinAmountPlaceholder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,6 +26,17 @@ public final class Duels extends JavaPlugin {
 
         instance = this;
         reload();
+
+        Bukkit.getPluginManager().registerEvents(gameListener, this);
+        Bukkit.getPluginManager().registerEvents(new ConnectListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ItemListener(), this);
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            Bukkit.getConsoleSender().sendMessage("§6Hooking into placeholerapi");
+            new WinAmountPlaceholder(this).register();
+        }
+
+        getCommand("duel").setExecutor(new DuelCommand(this));
+        getCommand("duel").setTabCompleter(new DuelCommand(this));
 
     }
 
@@ -44,12 +56,6 @@ public final class Duels extends JavaPlugin {
         arenaManager = new ArenaManager(this); // STEP 2
 
         gameListener = new GameListener(this);
-        Bukkit.getPluginManager().registerEvents(gameListener, this);
-        Bukkit.getPluginManager().registerEvents(new ConnectListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new ItemListener(), this);
-
-        getCommand("duel").setExecutor(new DuelCommand(this));
-        getCommand("duel").setTabCompleter(new DuelCommand(this));
 
         new KitsFile(this);
         new PlayerDataFile(this);
