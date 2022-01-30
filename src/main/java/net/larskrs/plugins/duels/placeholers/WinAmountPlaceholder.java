@@ -35,16 +35,12 @@ public class WinAmountPlaceholder extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-        if (params.equalsIgnoreCase("win_amount")) {
+        if (params.equalsIgnoreCase("player_wins")) {
             return PlayerDataFile.getPlayerWins(player.getPlayer()) + "";
         }
 
-        if (params.equalsIgnoreCase("placeholder1")) {
-            return "Placeholder Text 1";
-        }
-
-        if (params.equalsIgnoreCase("placeholder2")) {
-            return "Placeholder Text 2";
+        if (params.equalsIgnoreCase("player_kills")) {
+            return PlayerDataFile.getPlayerWins(player.getPlayer()) + "";
         }
 
         return null;

@@ -249,6 +249,10 @@ public class Arena {
     }
     public void respawnPlayer(UUID uuid) {
 
+        if (ConfigManager.getGameType(id).equals("LASTSTANDING") && this.state == GameState.LIVE) {
+            return;
+        }
+
         Player p = Bukkit.getPlayer(uuid);
         Arena a = duels.getArenaManager().getArena(p);
 

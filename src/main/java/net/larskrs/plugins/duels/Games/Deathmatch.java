@@ -3,6 +3,7 @@ package net.larskrs.plugins.duels.Games;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.listener.RespawnCountdown;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
@@ -42,7 +43,7 @@ public class Deathmatch extends Game {
     public void onNewRoundBegin() {
         for (UUID uuid : arena.getPlayers()) {
             Player p = Bukkit.getPlayer(uuid);
-            p.teleport(ConfigManager.getTeamSpawn(arena.getId(),arena.getTeam(p)));
+            p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
             p.setHealth(p.getMaxHealth());
             p.setFoodLevel(20);
             p.setArrowsInBody(0);
@@ -67,7 +68,7 @@ public class Deathmatch extends Game {
             Scoreboard board = p.getScoreboard();
             Objective obj;
             if (board.getObjective("deathmatchBoard") == null) {
-            obj = board.registerNewObjective("deathmatchBoard", "dummy");
+                obj = board.registerNewObjective("deathmatchBoard", "dummy");
             } else {
                 obj = board.getObjective("deathmatchBoard");
             }
@@ -79,14 +80,16 @@ public class Deathmatch extends Game {
                 board.resetScores(s);
             }
 
-            Score s1 = obj.getScore(""); s1.setScore(0);
-            Score s2 = obj.getScore(ChatColor.AQUA + "Team: " + arena.getTeam(p).getDisplay()); s2.setScore(1);
-            Score s3 = obj.getScore(ChatColor.RED + ""); s3.setScore(2);
+            Score s1 = obj.getScore("");
+            s1.setScore(0);
+            Score s2 = obj.getScore(ChatColor.AQUA + "Team: " + arena.getTeam(p).getDisplay());
+            s2.setScore(1);
+            Score s3 = obj.getScore(ChatColor.RED + "");
+            s3.setScore(2);
 
             Objective h = board.registerNewObjective("showhealth", Criterias.HEALTH);
             h.setDisplaySlot(DisplaySlot.BELOW_NAME);
             h.setDisplayName(ChatColor.DARK_RED + "❤");
-
 
 
             obj.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -115,6 +118,7 @@ public class Deathmatch extends Game {
 
         }
     }
+
     @Override
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
@@ -141,21 +145,25 @@ public class Deathmatch extends Game {
             Player killer = e.getEntity().getKiller();
             Player p = e.getEntity();
 
+            e.getDrops().clear();
+            Random r = new Random();
+            e.getDrops().add(new ItemStack(Material.ARROW, r.nextInt(4 - 1) + 1));
+            e.getDrops().add(new ItemStack(Material.COOKED_BEEF, r.nextInt(4 - 1) + 1));
+            arena.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + p.getName() + " was killed!");
+            new RespawnCountdown(duels, p, 10).start();
+            arena.getGame().onCustomRespawn(p, killer);
+            p.setGameMode(GameMode.SPECTATOR);
+        } else {
+            Player p = e.getEntity();
 
-            if (arena.getPlayers().contains(p.getUniqueId()) && arena.getPlayers().contains(killer.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
-                    // Both players were in the live match.
-                    arena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + p.getName() + " was killed by " + killer.getName() + "!");
-                    addPoint(arena.getTeam(killer));
-
-                    e.getDrops().clear();
-                    e.getDrops().add(new ItemStack(Material.GOLDEN_APPLE));
-
-                }
-            }
-
-
-
+            e.getDrops().clear();
+            Random r = new Random();
+            e.getDrops().add(new ItemStack(Material.ARROW, r.nextInt(4 - 1) + 1));
+            e.getDrops().add(new ItemStack(Material.COOKED_BEEF, r.nextInt(4 - 1) + 1));
+            arena.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + p.getName() + " was killed!");
+            new RespawnCountdown(duels, p, 10).start();
+            p.setGameMode(GameMode.SPECTATOR);
         }
 
     }
-
+}

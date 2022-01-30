@@ -29,6 +29,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -162,35 +163,6 @@ public class GameListener implements Listener {
 
             if (a.getTeam(p) == a.getTeam(killer) && p != killer) {
                 e.setCancelled(true);
-                return;
-            }
-
-
-            lastHit.put(e.getEntity().getUniqueId(), killer.getUniqueId());
-
-
-            System.out.println("can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
-            if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
-                e.setCancelled(true);
-                // custom respawn logic.
-
-                if (duels.getArenaManager().getArena(p) != null) {
-
-
-                    // player is in arena.
-                    if (!isProjectile) {
-
-                    a.getGame().onCustomRespawn(p, killer);
-                    new RespawnCountdown(duels, p, 10).start();
-
-                    p.setGameMode(GameMode.SPECTATOR);
-                    }
-
-                } else {
-
-                    p.teleport(ConfigManager.getLobbySpawnLocation());
-                    p.setHealth(p.getMaxHealth());
-                }
             }
         }
     }
@@ -232,38 +204,6 @@ public class GameListener implements Listener {
             }
 
             if (a.getState() != GameState.LIVE) {
-                e.setCancelled(true);
-            }
-            System.out.println( "can i die? " + (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) + " damage: " + (((Player) e.getEntity()).getHealth() - e.getDamage()));
-            if (((Player) e.getEntity()).getHealth() - e.getDamage() <= 0) {
-                e.setCancelled(true);
-                // custom respawn logic.
-
-
-
-                if (duels.getArenaManager().getArena(p) != null) {
-
-
-                    // player is in arena.
-
-                    a.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + p.getName() + " was killed!");
-                    new RespawnCountdown(duels, p, 10).start();
-                    if (lastHit.get(p.getUniqueId()) == null && lastHit.get(p.getUniqueId()) != p.getUniqueId()) {
-                    a.respawnPlayer(p.getUniqueId());
-                    } else {
-                        a.getGame().onCustomRespawn(p, Bukkit.getPlayer(lastHit.get(p.getUniqueId())));
-                        Duels.getGameListener().resetLastHit(p);
-                    }
-                    p.setGameMode(GameMode.SPECTATOR);
-
-
-
-
-                } else {
-
-                    p.teleport(ConfigManager.getLobbySpawnLocation());
-                    p.setHealth(p.getMaxHealth());
-                }
                 e.setCancelled(true);
             }
         }

@@ -161,7 +161,6 @@ public class KitsFile {
         for (String s : modifyFile.getConfigurationSection("kits." + name).getKeys(false)) {
             if (!s.equalsIgnoreCase("options")) {
 
-                System.out.println(modifyFile.getString("kits." + name + "." + s + ".type"));
                 if (modifyFile.getString("kits." + name + "." + s + ".type").contains("POTION")) {
                     contents.add(getSerializedPotionItem("kits." + name + "." + s));
                 } else {

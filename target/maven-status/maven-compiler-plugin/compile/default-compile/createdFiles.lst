@@ -19,6 +19,7 @@ net\larskrs\plugins\duels\GUI\TeamGUI.class
 net\larskrs\plugins\duels\listener\RespawnCountdown.class
 net\larskrs\plugins\duels\GUI\KitGUI.class
 net\larskrs\plugins\duels\Kits\ArcherKit.class
+net\larskrs\plugins\duels\placeholers\WinAmountPlaceholder.class
 net\larskrs\plugins\duels\Games\Game.class
 net\larskrs\plugins\duels\managers\ArenaManager.class
 net\larskrs\plugins\duels\Kits\KnightKit.class

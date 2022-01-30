@@ -26,6 +26,11 @@ public class RespawnCountdown extends BukkitRunnable {
     }
 
     public void start () {
+
+        if (arena.getGame().equals("LASTSTANDING")) {
+            return;
+        }
+
         runTaskTimer(duels, 0, 20);
 
     }
@@ -34,6 +39,9 @@ public class RespawnCountdown extends BukkitRunnable {
     public void run() {
         this.arena = duels.getArenaManager().getArena(player);
         if (arena != null) {
+
+
+
             if (startupTime == 0) {
                 arena.respawnPlayer(player.getUniqueId());
                 this.cancel();
