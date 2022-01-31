@@ -17,10 +17,12 @@ import java.util.UUID;
 public abstract class Game implements Listener {
 
     protected Arena arena;
+    protected Boolean hasEnded;
 
 
     public Game(Duels duels, Arena arena) {
         this.arena = arena;
+        this.hasEnded = false;
 
         Bukkit.getPluginManager().registerEvents(this, duels);
     }
