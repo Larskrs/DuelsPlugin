@@ -40,6 +40,7 @@ public class Arena {
     private Scoreboard scoreboard;
     private ArenaOptions options;
     public String name;
+    
 
     public Arena(Duels duels, int id, Location spawn) {
         this.duels = duels;
@@ -61,6 +62,7 @@ public class Arena {
             this.game = new Fortress(duels, this);
         }
         this.name = ConfigManager.getArenaName(id);
+        
 
     }
 
@@ -264,4 +266,7 @@ public class Arena {
     }
 
     public String getName () {return ConfigManager.getArenaName(id);}
+    public void endGame() {
+        game.endGame();
+        }
 }
