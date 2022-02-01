@@ -15,7 +15,7 @@ public class LiveGameTimer extends BukkitRunnable {
     public LiveGameTimer (Duels duels, Arena arena) {
         this.duels = duels;
         this.arena = arena;
-        this.startupTime = ConfigManager.getStartupTime();
+        this.gameTime = ConfigManager.getStartupTime();
         
     }
 
@@ -31,10 +31,9 @@ public class LiveGameTimer extends BukkitRunnable {
         if (gameTime == 10) {
             
             arena.getGame().endGame();
-            return; // Stop the countdown from going any lower.
         } else if (gameTime <= 0) {
           arena.reset(true);
         }   
-        startupTime--;
+        gameTime--;
     }
 }

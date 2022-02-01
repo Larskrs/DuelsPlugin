@@ -44,6 +44,7 @@ public abstract class Game implements Listener {
     }
     public abstract void onNewRoundBegin();
     public abstract void onStart();
+    public abstract void endGame();
 
     public void unregister() {
         HandlerList.unregisterAll(this);

@@ -104,6 +104,11 @@ public class Deathmatch extends Game {
     }
 
     @Override
+    public void endGame() {
+
+    }
+
+    @Override
     public void onCustomRespawn(Player hurt, Player killer) {
 
         Player lHit = killer;

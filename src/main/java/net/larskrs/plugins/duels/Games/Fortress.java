@@ -96,6 +96,12 @@ public class Fortress extends Game {
         }
 
     }
+
+    @Override
+    public void endGame() {
+
+    }
+
     public void lootStorage(Player player, Block block) {
         arena.sendMessage(arena.getTeam(player).getDisplay() + ChatColor.GOLD + " just looted a " + block.getType().name().toLowerCase() + " " + ChatColor.YELLOW + "'s points (" + ChatColor.AQUA + (this.points.get(arena.getTeam(player)) + 1) + ChatColor.YELLOW + "/" + ChatColor.AQUA + pointsToWin + ChatColor.YELLOW + ")" + "!");
     }
