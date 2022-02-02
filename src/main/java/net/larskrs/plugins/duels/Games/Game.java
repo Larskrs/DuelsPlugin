@@ -3,6 +3,7 @@ package net.larskrs.plugins.duels.Games;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.instances.LiveGameTimer;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
@@ -18,6 +19,7 @@ public abstract class Game implements Listener {
 
     protected Arena arena;
     protected Boolean hasEnded;
+    protected LiveGameTimer liveGameTimer;
 
 
     public Game(Duels duels, Arena arena) {
@@ -35,7 +37,7 @@ public abstract class Game implements Listener {
             arena.getKit(p).giveKit(p);
             p.closeInventory();
             p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
-
+            this.liveGameTimer = new LiveGameTimer(Duels.getInstance(), arena,240);
         }
 
 
@@ -50,4 +52,8 @@ public abstract class Game implements Listener {
     }
     public abstract void onCustomRespawn(Player hurt, Player killer);
     public abstract void addPoint(Team team);
+
+    public abstract void endGame();
+
+    public abstract void onScoreboardUpdate();
 }

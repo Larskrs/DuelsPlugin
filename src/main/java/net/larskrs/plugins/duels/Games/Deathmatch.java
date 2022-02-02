@@ -1,8 +1,12 @@
 package net.larskrs.plugins.duels.Games;
 
+import dev.jcsoftware.jscoreboards.JGlobalScoreboard;
+import dev.jcsoftware.jscoreboards.JPerPlayerScoreboard;
+import dev.jcsoftware.jscoreboards.JScoreboard;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.instances.LiveGameTimer;
 import net.larskrs.plugins.duels.listener.RespawnCountdown;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
@@ -12,6 +16,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import net.larskrs.plugins.duels.Duels;
@@ -26,6 +32,8 @@ public class Deathmatch extends Game {
     private HashMap<UUID, Integer> Playerpoints;
     private int pointsToWin;
     private Duels duels;
+    private Team winner;
+    private JPerPlayerScoreboard scoreboard;
 
 
     public Deathmatch(Duels duels, Arena arena) {
@@ -55,6 +63,8 @@ public class Deathmatch extends Game {
     public void onStart() {
         arena.setState(GameState.LIVE);
 
+        liveGameTimer = new LiveGameTimer(duels, arena, 240);
+        liveGameTimer.start();
         this.pointsToWin = Math.round(ConfigManager.getGamePointsToWin(arena.getId()) * (arena.getPlayers().size() / 2));
         for (UUID uuid : arena.getPlayers()) {
             Playerpoints.put(uuid, 0);
@@ -63,44 +73,33 @@ public class Deathmatch extends Game {
         arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + pointsToWin + " kills for your team!");
 
-        for (UUID uuid : arena.getPlayers()) {
-            Player p = Bukkit.getPlayer(uuid);
-            Scoreboard board = p.getScoreboard();
-            Objective obj;
-            if (board.getObjective("deathmatchBoard") == null) {
-                obj = board.registerNewObjective("deathmatchBoard", "dummy");
-            } else {
-                obj = board.getObjective("deathmatchBoard");
-            }
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            obj.setDisplayName(ChatColor.YELLOW.toString() + ChatColor.BOLD + "DUELS");
 
-            Set<String> scoreList = board.getEntries();
-            for (String s : scoreList) {
-                board.resetScores(s);
+            for (UUID uuid : arena.getPlayers()) {
+                Player p = Bukkit.getPlayer(uuid);
+                assert p != null;
+                p.setFireTicks(0);
+
             }
 
-            Score s1 = obj.getScore("");
-            s1.setScore(0);
-            Score s2 = obj.getScore(ChatColor.AQUA + "Team: " + arena.getTeam(p).getDisplay());
-            s2.setScore(1);
-            Score s3 = obj.getScore(ChatColor.RED + "");
-            s3.setScore(2);
-
-            Objective h = board.registerNewObjective("showhealth", Criterias.HEALTH);
-            h.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            h.setDisplayName(ChatColor.DARK_RED + "❤");
-
-
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            obj.setDisplayName(ChatColor.YELLOW.toString() + ChatColor.BOLD + "DUELS");
-
-            p.setScoreboard(board);
-
-            p.setFireTicks(0);
-
-        }
-
+            scoreboard = new JPerPlayerScoreboard(
+                    (player) -> {
+                        return "&e&lDUELS";
+                    },
+                    (player) -> {
+                            return Arrays.asList(
+                                    "",
+                                    "&eTime " + liveGameTimer.getOutput(),
+                                    "&d",
+                                    "&ePoints &b" + points.get(arena.getTeam(player)),
+                                    "&2"
+                            );
+                    }
+            );
+            Bukkit.getOnlinePlayers().forEach(this::addToScoreboard);
+    }
+    private void addToScoreboard(Player player) {
+        scoreboard.addPlayer(player);
+        scoreboard.updateScoreboard();
     }
 
     @Override
@@ -114,7 +113,7 @@ public class Deathmatch extends Game {
             arena.sendMessage(ChatColor.GOLD + "" + arena.getTeam(lHit).getDisplay() + ChatColor.YELLOW + "'s points (" + ChatColor.AQUA + (this.points.get(arena.getTeam(lHit)) + 1) + ChatColor.YELLOW + "/" + ChatColor.AQUA + pointsToWin + ChatColor.YELLOW + ")" + "!");
             addPoint(arena.getTeam(lHit));
             Playerpoints.replace(killer.getUniqueId(), Playerpoints.get(killer.getUniqueId()) + 1);
-
+            scoreboard.updateScoreboard();
 
         }
     }
@@ -130,12 +129,34 @@ public class Deathmatch extends Game {
                     PlayerDataFile.addPlayerWin(Bukkit.getPlayer(pl), 1);
                 }
             }
-            arena.reset(true);
+            winner = team;
+            endGame();
 
         }
 
 
         points.replace(team, teamPoints);
+    }
+
+    @Override
+    public void endGame() {
+
+        liveGameTimer.endGameTime();
+
+        arena.sendMessage("§6§l§m|------------|§c§l GAME OVER "  + " §6§l§m|------------|");
+        arena.sendMessage("");
+        if (winner != null)  {
+        arena.sendMessage(ChatColor.YELLOW + "  WINNER - " + winner.getDisplay());
+        }
+        arena.sendMessage(ChatColor.GREEN +"  - game resets in 10 seconds.");
+        arena.sendMessage("");
+
+
+    }
+
+    @Override
+    public void onScoreboardUpdate() {
+        scoreboard.updateScoreboard();
     }
 
     @EventHandler

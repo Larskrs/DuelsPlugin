@@ -1,9 +1,11 @@
 package net.larskrs.plugins.duels.Games;
 
+import dev.jcsoftware.jscoreboards.JPerPlayerScoreboard;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.instances.LiveGameTimer;
 import net.larskrs.plugins.duels.listener.RespawnCountdown;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
@@ -17,17 +19,17 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.*;
 
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class LastStanding extends Game {
 
     private HashMap<Team, Integer> points;
     private HashMap<UUID, Integer> Playerpoints;
+    private HashMap<Team, Integer> teamCount;
     private int pointsToWin;
     private Duels duels;
+    private Team winner;
+    private JPerPlayerScoreboard scoreboard;
 
 
     public LastStanding(Duels duels, Arena arena) {
@@ -35,6 +37,7 @@ public class LastStanding extends Game {
         this.duels = duels;
         this.points = new HashMap<>();
         this.Playerpoints = new HashMap<>();
+        this.teamCount = new HashMap<>();
 
         for (Team t : Team.values()) {
             points.put(t, 0);
@@ -57,53 +60,46 @@ public class LastStanding extends Game {
     public void onStart() {
         arena.setState(GameState.LIVE);
 
+        liveGameTimer = new LiveGameTimer(duels, arena, 240);
+        liveGameTimer.start();
+
         this.pointsToWin = Math.round(arena.getPlayers().size() / 2);
         for (UUID uuid : arena.getPlayers()) {
             Playerpoints.put(uuid, 0);
+            teamCount.put(arena.getTeam(Bukkit.getPlayer(uuid)), teamCount.get(arena.getTeam(Bukkit.getPlayer(uuid))) + 1);
         }
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[L<ST ST<ND<NG] ");
-        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + pointsToWin + " kills for your team!");
+        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " you team may only remain!");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.RED + " no respawns: " + ChatColor.GRAY + "you only got this one chance!");
+
+
 
         for (UUID uuid : arena.getPlayers()) {
             Player p = Bukkit.getPlayer(uuid);
-            Scoreboard board = p.getScoreboard();
-            Objective obj;
-            if (board.getObjective("deathmatchBoard") == null) {
-                obj = board.registerNewObjective("deathmatchBoard", "dummy");
-            } else {
-                obj = board.getObjective("deathmatchBoard");
-            }
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            obj.setDisplayName(ChatColor.YELLOW.toString() + ChatColor.BOLD + "DUELS");
-
-            Set<String> scoreList = board.getEntries();
-            for (String s : scoreList) {
-                board.resetScores(s);
-            }
-
-            Score s1 = obj.getScore("");
-            s1.setScore(0);
-            Score s2 = obj.getScore(ChatColor.AQUA + "Team: " + arena.getTeam(p).getDisplay());
-            s2.setScore(1);
-            Score s3 = obj.getScore(ChatColor.RED + "");
-            s3.setScore(2);
-
-            Objective h = board.registerNewObjective("showhealth", Criterias.HEALTH);
-            h.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            h.setDisplayName(ChatColor.DARK_RED + "❤");
-
-
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            obj.setDisplayName(ChatColor.YELLOW.toString() + ChatColor.BOLD + "DUELS");
-
-            p.setScoreboard(board);
-
             p.setFireTicks(0);
 
         }
+        scoreboard = new JPerPlayerScoreboard(
+                (player) -> {
+                    return "&e&lDUELS";
+                },
+                (player) -> {
+                    return Arrays.asList(
+                            "",
+                            "&eTime " + liveGameTimer.getOutput(),
+                            "&d",
+                            "&ePoints &b" + points.get(arena.getTeam(player)),
+                            "&2"
+                    );
+                }
+        );
+        Bukkit.getOnlinePlayers().forEach(this::addToScoreboard);
 
+    }
+    private void addToScoreboard(Player player) {
+        scoreboard.addPlayer(player);
+        scoreboard.updateScoreboard();
     }
 
     @Override
@@ -125,6 +121,9 @@ public class LastStanding extends Game {
     @Override
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
+
+
+
         if (teamPoints >= arena.getTeamCount(team)) {
             arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
             for (UUID pl : arena.getPlayers()) {
@@ -133,12 +132,33 @@ public class LastStanding extends Game {
                     PlayerDataFile.addPlayerWin(Bukkit.getPlayer(pl), 1);
                 }
             }
-            arena.reset(true);
+            winner = team;
+            endGame();
 
         }
 
 
         points.replace(team, teamPoints);
+    }
+
+    @Override
+    public void endGame() {
+
+        liveGameTimer.endGameTime();
+
+        arena.sendMessage("§6§l§m|------------|§c§l GAME OVER "  + " §6§l§m|------------|");
+        arena.sendMessage("");
+
+        if (winner != null)  {
+            arena.sendMessage(ChatColor.YELLOW + "  WINNER - " + winner.getDisplay());
+        }
+        arena.sendMessage(ChatColor.GREEN +"  - game resets in 10 seconds.");
+        arena.sendMessage("");
+    }
+
+    @Override
+    public void onScoreboardUpdate() {
+        scoreboard.updateScoreboard();
     }
 
     @EventHandler
