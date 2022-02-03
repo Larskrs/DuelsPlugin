@@ -54,7 +54,6 @@ public abstract class Game implements Listener {
     public abstract void onCustomRespawn(Player hurt, Player killer);
     public abstract void addPoint(Team team);
 
-    public abstract void endGame();
 
     public abstract void onScoreboardUpdate();
 }

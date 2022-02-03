@@ -62,7 +62,7 @@ public class Deathmatch extends Game {
     public void onStart() {
         arena.setState(GameState.LIVE);
 
-        liveGameTimer = new LiveGameTimer(duels, arena, 240);
+        liveGameTimer = new LiveGameTimer(duels, arena, 600);
         liveGameTimer.start();
         this.pointsToWin = Math.round(ConfigManager.getGamePointsToWin(arena.getId()) * (arena.getPlayers().size() / 2));
         for (UUID uuid : arena.getPlayers()) {
@@ -88,8 +88,8 @@ public class Deathmatch extends Game {
                                     "",
                                     "&eTime " + liveGameTimer.getOutput(),
                                     "&d",
-                                    Team.RED.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.RED) ? true : ChatColor.GRAY + " (you)"),
-                                    Team.BLUE.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.BLUE) ? true : ChatColor.GRAY + " (you)"),
+                                    Team.RED.getDisplay() + ChatColor.AQUA + " " + points.get(Team.RED) + (arena.getTeam(player).equals(Team.RED) ? ChatColor.GRAY + " (you)" : ""),
+                                    Team.BLUE.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.BLUE) ? ChatColor.GRAY + " (you)" : ""),
                                     "&2"
                             );
                     }
@@ -100,17 +100,18 @@ public class Deathmatch extends Game {
         for (UUID u: arena.getPlayers()
              ) {
                 players.add(Bukkit.getPlayer(u));
+                Team t = arena.getTeam(Bukkit.getPlayer(u));
+            JScoreboardTeam jScoreboardTeam = scoreboard.createTeam(t.name(), t.getDisplay() + " ", t.getChatColor());
+                jScoreboardTeam.addPlayer(Bukkit.getPlayer(u));
+            if (!scoreboard.getTeams().contains(jScoreboardTeam)) {
+                scoreboard.getTeams().add(jScoreboardTeam);
+            }
         }
             players.forEach(this::addToScoreboard);
     }
     private void addToScoreboard(Player player) {
         scoreboard.addPlayer(player);
         scoreboard.updateScoreboard();
-    }
-
-    @Override
-    public void endGame() {
-
     }
 
     @Override

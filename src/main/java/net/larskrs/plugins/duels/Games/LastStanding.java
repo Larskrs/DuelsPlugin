@@ -102,10 +102,6 @@ public class LastStanding extends Game {
         scoreboard.updateScoreboard();
     }
 
-    @Override
-    public void endGame() {
-
-    }
 
     @Override
     public void onCustomRespawn(Player hurt, Player killer) {
