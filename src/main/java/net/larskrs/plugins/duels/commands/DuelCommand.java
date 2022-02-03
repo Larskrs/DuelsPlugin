@@ -98,8 +98,8 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                 }
             } else if (args.length == 1 && args[0].equalsIgnoreCase("kit")) {
                 Arena a = duels.getArenaManager().getArena(p);
-                if (a != null) {
-                        new KitGUI(a , p);
+                if (a == null) {
+                        p.sendMessage(ChatColor.RED + "You are not in a match! please join a game before running this command.");
                 } else {
                     new KitGUI(a , p);
                 }
@@ -197,15 +197,21 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
         p.sendMessage(ChatColor.GREEN +"  - /duel join <id> " + ChatColor.GRAY + ": let's you join a game.");
         p.sendMessage(ChatColor.GREEN +"  - /duel leave " + ChatColor.GRAY + ": let's you leave a game.");
         p.sendMessage(ChatColor.GREEN +"  - /duel team " + ChatColor.GRAY + ": let's you switch team, only loosers bail on their team.");
+        p.sendMessage("");
         if (hasPermission) {
             p.sendMessage(ChatColor.GOLD +"  - /duel reload " + ChatColor.GRAY + ": let's you reload the plugin.");
-            p.sendMessage(ChatColor.GOLD +"  - /duel setkit <name> <icon> <description> " + ChatColor.GRAY + ": let's you register or change kits.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel setkit <kit-name> <icon> <description>" + ChatColor.GRAY + ": let's you register or change kits.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel addArenakit <arena-id> <kit-name> " + ChatColor.GRAY + ": let's you add kits to an arena.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel removeArenakit <arena-id> <kit-name> " + ChatColor.GRAY + ": let's you remove kits from an arena.");
             p.sendMessage(ChatColor.GOLD +"  - /duel removekit <name> " + ChatColor.GRAY + ": let's you remove kits.");
-            p.sendMessage(ChatColor.GOLD +"  - /duel setArenaName <id> " + ChatColor.GRAY + ": let's you set arena name.");
-            p.sendMessage(ChatColor.GOLD +"  - /duel setArenaLobby <id> " + ChatColor.GRAY + ": let's you set arena lobby.");
-            p.sendMessage(ChatColor.GOLD +"  - /duel setTeamSpawn <id> <team> " + ChatColor.GRAY + ": let's you set team spawn.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel setArenaName <arena-id> " + ChatColor.GRAY + ": let's you set arena name.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel setArenaLobby <arena-id> " + ChatColor.GRAY + ": let's you set arena lobby.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel setTeamSpawn <arena-id> <team> " + ChatColor.GRAY + ": let's you set team spawn.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel setArena <arena-id> <game> " + ChatColor.GRAY + ": let's you set arena.");
             p.sendMessage("");
             p.sendMessage(ChatColor.GRAY + "Running version: " + Bukkit.getPluginManager().getPlugin("SimpleDuels").getDescription().getVersion());
+
+                
         }
         p.sendMessage("§6§l§m|----------------------------------|");
 

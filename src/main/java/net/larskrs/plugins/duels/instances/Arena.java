@@ -17,7 +17,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -53,6 +52,9 @@ public class Arena {
         this.teams = new HashMap<>();
         this.countdown = new Countdown(duels, this);
         this.kits = new HashMap<>();
+
+        loadOptions();
+
         Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ID: " + id +  "] " + ConfigManager.getGameType(id) + ChatColor.RED + "" + (ConfigManager.getGameType(id).contains("DEATHMATCH")));
         if (ConfigManager.getGameType(id).contains("DEATHMATCH")) {
             this.game = new Deathmatch(duels, this);
@@ -62,15 +64,17 @@ public class Arena {
             this.game = new Fortress(duels, this);
         }
         this.name = ConfigManager.getArenaName(id);
-        
+
 
     }
 
     private ArenaOptions loadOptions() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "loading... arena-options");
-        ArenaOptions o = new ArenaOptions(this, duels.getConfig().getString("arenas." + getId() + ".options.game-type"), duels.getConfig().getInt("arenas." + getId() + ".options.points-to-win"), false);
-        o.type = duels.getConfig().getString("arenas." + getId() + ".options.game-type");
-        o.winAmount = duels.getConfig().getInt("arenas." + getId() + ".options.points-to-win");
+        ArenaOptions o = new ArenaOptions(this, duels.getConfig().getString("arenas." + getId() + ".options.game-type"));
+        o.type = duels.getConfig().getString("arenas." + getId() + ".options.game-type", "arena-has-no-game-type-in-config");
+        o.winAmount = duels.getConfig().getInt("arenas." + getId() + ".options.points-to-win", 0);
+        o.timeLimit = duels.getConfig().getInt("arenas." + getId() + ".options.time-limit", 240);
+        o.maxPlayers = duels.getConfig().getInt("arenas." + getId() + ".options.max-players", 0);
         Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "arena info: " + o.type + " " + o.winAmount);
 
         return o;
@@ -103,6 +107,7 @@ public class Arena {
                     p.setFoodLevel(20);
                     p.setArrowsInBody(0);
                     p.setFireTicks(0);
+                    net.larskrs.plugins.duels.managers.ScoreboardManager.setHubScoreboard(p);
                 }
                 players.clear();
                 teams.clear();
@@ -187,7 +192,10 @@ public class Arena {
         player.getInventory().clear();
         player.setFoodLevel(20);
         player.setGameMode(GameMode.SURVIVAL);
-        NametagManager.removeTag(player);
+        //NametagManager.removeTag(player);
+        net.larskrs.plugins.duels.managers.ScoreboardManager.setHubScoreboard(player);
+
+
         player.getActivePotionEffects().clear();
 
         if (state == GameState.COUNTDOWN && players.size() < ConfigManager.getRequiredPlayers()) {
@@ -207,7 +215,7 @@ public class Arena {
     public void setTeam (Player player, Team team) {
         removeTeam(player);
         teams.put(player.getUniqueId(), team);
-        NametagManager.newTag(player, team);
+        //NametagManager.newTag(player, team);
 
 
         player.sendMessage(ChatColor.YELLOW + "You have been placed on the " + team.getDisplay() + ChatColor.YELLOW + " team!");
@@ -216,7 +224,7 @@ public class Arena {
         if (teams.containsKey(player.getUniqueId())) {
             teams.remove(player.getUniqueId());
         }
-        NametagManager.removeTag(player);
+        //NametagManager.removeTag(player);
     }
     public int getTeamCount (Team team) {
         int amount = 0;
@@ -269,4 +277,6 @@ public class Arena {
     public void endGame() {
         game.endGame();
         }
+        public HashMap<UUID, Team> getTeams() {return teams; }
+
 }

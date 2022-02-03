@@ -138,6 +138,16 @@ public class Fortress extends Game {
         points.replace(team, teamPoints);
     }
 
+    @Override
+    public void endGame() {
+
+    }
+
+    @Override
+    public void onScoreboardUpdate() {
+
+    }
+
     @EventHandler
     public void onPlayerKill(PlayerDeathEvent e) {
 
