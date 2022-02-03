@@ -107,6 +107,7 @@ public class Arena {
                     p.setFoodLevel(20);
                     p.setArrowsInBody(0);
                     p.setFireTicks(0);
+                    net.larskrs.plugins.duels.managers.ScoreboardManager.setHubScoreboard(p);
                 }
                 players.clear();
                 teams.clear();
@@ -192,6 +193,9 @@ public class Arena {
         player.setFoodLevel(20);
         player.setGameMode(GameMode.SURVIVAL);
         //NametagManager.removeTag(player);
+        net.larskrs.plugins.duels.managers.ScoreboardManager.setHubScoreboard(player);
+
+
         player.getActivePotionEffects().clear();
 
         if (state == GameState.COUNTDOWN && players.size() < ConfigManager.getRequiredPlayers()) {

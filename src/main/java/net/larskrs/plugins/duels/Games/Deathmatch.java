@@ -1,13 +1,12 @@
 package net.larskrs.plugins.duels.Games;
 
-import dev.jcsoftware.jscoreboards.JGlobalScoreboard;
-import dev.jcsoftware.jscoreboards.JPerPlayerScoreboard;
-import dev.jcsoftware.jscoreboards.JScoreboard;
+import dev.jcsoftware.jscoreboards.*;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
 import net.larskrs.plugins.duels.instances.LiveGameTimer;
 import net.larskrs.plugins.duels.listener.RespawnCountdown;
+import net.larskrs.plugins.duels.managers.ArenaManager;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
 import org.bukkit.Bukkit;
@@ -80,7 +79,6 @@ public class Deathmatch extends Game {
                 p.setFireTicks(0);
 
             }
-
             scoreboard = new JPerPlayerScoreboard(
                     (player) -> {
                         return "&e&lDUELS";
@@ -90,12 +88,20 @@ public class Deathmatch extends Game {
                                     "",
                                     "&eTime " + liveGameTimer.getOutput(),
                                     "&d",
-                                    "&ePoints &b" + points.get(arena.getTeam(player)),
+                                    Team.RED.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.RED) ? true : ChatColor.GRAY + " (you)"),
+                                    Team.BLUE.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.BLUE) ? true : ChatColor.GRAY + " (you)"),
                                     "&2"
                             );
                     }
+
             );
-            Bukkit.getOnlinePlayers().forEach(this::addToScoreboard);
+            scoreboard.setOptions(new JScoreboardOptions(JScoreboardTabHealthStyle.HEARTS, true));
+            List<Player> players = new ArrayList<>();
+        for (UUID u: arena.getPlayers()
+             ) {
+                players.add(Bukkit.getPlayer(u));
+        }
+            players.forEach(this::addToScoreboard);
     }
     private void addToScoreboard(Player player) {
         scoreboard.addPlayer(player);
@@ -156,7 +162,7 @@ public class Deathmatch extends Game {
 
     @Override
     public void onScoreboardUpdate() {
-        scoreboard.updateScoreboard();
+        if (scoreboard!= null) {scoreboard.updateScoreboard(); }
     }
 
     @EventHandler

@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -65,7 +66,7 @@ public class GameListener implements Listener {
     }
     @EventHandler
     public void onSpawn(PlayerSpawnLocationEvent e) {
-        e.SetSpawnLocation(ConfigManager.getLobbySpawnLocation());
+        e.setSpawnLocation(ConfigManager.getLobbySpawnLocation());
     }
 
     @EventHandler
