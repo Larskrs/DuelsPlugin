@@ -63,7 +63,10 @@ public class GameListener implements Listener {
             e.setRespawnLocation(ConfigManager.getLobbySpawnLocation());
         }
     }
-
+    @EventHandler
+    public void onSpawn(PlayerSpawnLocationEvent e) {
+        e.SetSpawnLocation(ConfigManager.getLobbySpawnLocation());
+    }
 
     @EventHandler
     public void onPlayerHunger(FoodLevelChangeEvent e) {
