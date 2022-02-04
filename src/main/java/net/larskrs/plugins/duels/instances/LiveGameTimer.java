@@ -44,8 +44,8 @@ public class LiveGameTimer extends BukkitRunnable {
         int seconds = i % 60;
 
         output = String.format("%02dm%02ds", minutes, seconds);
-        arena.getGame().onScoreboardUpdate();
         gameTime--;
+        arena.getGame().onScoreboardUpdate();
     }
 
     public int getGameTime () {return gameTime;}

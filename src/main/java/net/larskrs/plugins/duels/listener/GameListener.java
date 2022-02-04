@@ -100,12 +100,6 @@ public class GameListener implements Listener {
                 if (a != null) {
                 e.setCancelled(true);
 
-                if (ConfigManager.getGameType(a.getId()).contains("FORTRESS") && a.getState() == GameState.LIVE) {
-                    a.getGame().addPoint(a.getTeam(e.getPlayer()));
-                    Fortress fortress = (Fortress) a.getGame();
-                    fortress.lootStorage(e.getPlayer(), e.getClickedBlock());
-                }
-
                 return;
                 }
             }else {

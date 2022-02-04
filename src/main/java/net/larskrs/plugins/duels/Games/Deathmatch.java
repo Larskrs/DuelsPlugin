@@ -79,7 +79,7 @@ public class Deathmatch extends Game {
                 p.setFireTicks(0);
 
             }
-            scoreboard = new JPerPlayerScoreboard(
+            this.scoreboard= new JPerPlayerScoreboard(
                     (player) -> {
                         return "&e&lDUELS";
                     },

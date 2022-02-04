@@ -1,32 +1,38 @@
 package net.larskrs.plugins.duels.Games;
 
+import dev.jcsoftware.jscoreboards.JPerPlayerScoreboard;
+import dev.jcsoftware.jscoreboards.JScoreboardOptions;
+import dev.jcsoftware.jscoreboards.JScoreboardTabHealthStyle;
 import net.larskrs.plugins.duels.Duels;
+import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.enums.GameState;
 import net.larskrs.plugins.duels.instances.Arena;
+import net.larskrs.plugins.duels.instances.LiveGameTimer;
+import net.larskrs.plugins.duels.listener.RespawnCountdown;
 import net.larskrs.plugins.duels.managers.ConfigManager;
 import net.larskrs.plugins.duels.managers.Team;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
+import net.larskrs.plugins.duels.tools.StorageBlockTool;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.*;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class Fortress extends Game {
 
     private HashMap<Team, Integer> points;
     private HashMap<UUID, Integer> Playerpoints;
-
-
+    private HashMap<Team, Integer> teamCount;
     private int pointsToWin;
     private Duels duels;
+    private Team winner;
+    private JPerPlayerScoreboard scoreboard;
+    private List<Location> emptyContainers;
 
 
     public Fortress(Duels duels, Arena arena) {
@@ -34,6 +40,7 @@ public class Fortress extends Game {
         this.duels = duels;
         this.points = new HashMap<>();
         this.Playerpoints = new HashMap<>();
+        this.teamCount = new HashMap<>();
 
         for (Team t : Team.values()) {
             points.put(t, 0);
@@ -42,7 +49,13 @@ public class Fortress extends Game {
 
     @Override
     public void onNewRoundBegin() {
-
+        for (UUID uuid : arena.getPlayers()) {
+            Player p = Bukkit.getPlayer(uuid);
+            p.teleport(ConfigManager.getTeamSpawn(arena.getId(), arena.getTeam(p)));
+            p.setHealth(p.getMaxHealth());
+            p.setFoodLevel(20);
+            p.setArrowsInBody(0);
+        }
     }
 
 
@@ -50,54 +63,54 @@ public class Fortress extends Game {
     public void onStart() {
         arena.setState(GameState.LIVE);
 
-        this.pointsToWin = Math.round(ConfigManager.getGamePointsToWin(arena.getId()) * (arena.getPlayers().size() / 2));
+        liveGameTimer = new LiveGameTimer(duels, arena, 240);
+        liveGameTimer.start();
+
+        this.pointsToWin = Math.round(arena.getPlayers().size() / 2);
         for (UUID uuid : arena.getPlayers()) {
             Playerpoints.put(uuid, 0);
         }
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
-        arena.sendMessage(ChatColor.RED + "[F>RTR>SS] ");
-        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get as many points for your team as you can before the timer runs out!");
-        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + "You can get points by looting barrels or killing players.");
+        arena.sendMessage(ChatColor.RED + "[L<ST ST<ND<NG] ");
+        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " you team may only remain!");
+        arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.RED + " no respawns: " + ChatColor.GRAY + "you only got this one chance!");
+
+
 
         for (UUID uuid : arena.getPlayers()) {
             Player p = Bukkit.getPlayer(uuid);
-            Scoreboard board = p.getScoreboard();
-            Objective obj;
-            if (board.getObjective("deathmatchBoard") == null) {
-            obj = board.registerNewObjective("deathmatchBoard", "dummy");
-            } else {
-                obj = board.getObjective("deathmatchBoard");
-            }
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            obj.setDisplayName(ChatColor.YELLOW.toString() + ChatColor.BOLD + "DUELS");
-
-            Set<String> scoreList = board.getEntries();
-            for (String s : scoreList) {
-                board.resetScores(s);
-            }
-
-            Score s1 = obj.getScore(""); s1.setScore(0);
-            Score s2 = obj.getScore(ChatColor.AQUA + "Team: " + arena.getTeam(p).getDisplay()); s2.setScore(1);
-            Score s3 = obj.getScore(ChatColor.RED + ""); s3.setScore(2);
-
-            Objective h = board.registerNewObjective("showhealth", Criterias.HEALTH);
-            h.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            h.setDisplayName(ChatColor.DARK_RED + "❤");
-
-
-
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-            obj.setDisplayName(ChatColor.YELLOW.toString() + ChatColor.BOLD + "DUELS");
-
-            p.setScoreboard(board);
-
             p.setFireTicks(0);
-
         }
 
+        this.scoreboard = new JPerPlayerScoreboard(
+                (player) -> {
+                    return "&e&lDUELS";
+                },
+                (player) -> {
+                    return Arrays.asList(
+                            "",
+                            "&eTime " + liveGameTimer.getOutput(),
+                            "&d",
+                            Team.RED.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.RED) ? true : ChatColor.GRAY + " (you)"),
+                            Team.BLUE.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.BLUE) ? true : ChatColor.GRAY + " (you)"),
+                            "&2"
+                    );
+                }
+
+        );
+        scoreboard.setOptions(new JScoreboardOptions(JScoreboardTabHealthStyle.HEARTS, true));
+        List<Player> players = new ArrayList<>();
+        for (UUID u: arena.getPlayers()
+        ) {
+            players.add(Bukkit.getPlayer(u));
+        }
+        players.forEach(this::addToScoreboard);
+
+
     }
-    public void lootStorage(Player player, Block block) {
-        arena.sendMessage(arena.getTeam(player).getDisplay() + ChatColor.GOLD + " just looted a " + block.getType().name().toLowerCase() + " " + ChatColor.YELLOW + "'s points (" + ChatColor.AQUA + (this.points.get(arena.getTeam(player)) + 1) + ChatColor.YELLOW + "/" + ChatColor.AQUA + pointsToWin + ChatColor.YELLOW + ")" + "!");
+    private void addToScoreboard(Player player) {
+        scoreboard.addPlayer(player);
+        scoreboard.updateScoreboard();
     }
 
     @Override
@@ -116,17 +129,9 @@ public class Fortress extends Game {
         }
     }
 
+    @Override
     public void addPoint(Team team) {
         int teamPoints = points.get(team) + 1;
-        if (teamPoints >= pointsToWin) {
-            arena.sendMessage(ChatColor.GOLD + "[GAME] " + ChatColor.GREEN + team.getDisplay() + " has won the game, thx for playing :)");
-            for (UUID pl : arena.getPlayers()) {
-                if (arena.getTeam(Bukkit.getPlayer(pl)) == team) {
-                    arena.sendMessage(ChatColor.GRAY + " - " + team.getDisplay() + " " + Bukkit.getPlayer(pl).getName());
-                }
-            }
-            arena.reset(true);
-        }
 
 
         points.replace(team, teamPoints);
@@ -135,35 +140,44 @@ public class Fortress extends Game {
     @Override
     public void endGame() {
 
+        liveGameTimer.endGameTime();
+
+        arena.sendMessage("§6§l§m|------------|§c§l GAME OVER "  + " §6§l§m|------------|");
+        arena.sendMessage("");
+
+        if (winner != null)  {
+            arena.sendMessage(ChatColor.YELLOW + "  WINNER - " + winner.getDisplay());
+        }
+        arena.sendMessage(ChatColor.GREEN +"  - game resets in 10 seconds.");
+        arena.sendMessage("");
     }
 
     @Override
     public void onScoreboardUpdate() {
-
+        if (scoreboard!= null) {scoreboard.updateScoreboard(); }
     }
 
     @EventHandler
     public void onPlayerKill(PlayerDeathEvent e) {
 
-        if (e.getEntity().getKiller() != null) {
             Player killer = e.getEntity().getKiller();
             Player p = e.getEntity();
 
-
-            if (arena.getPlayers().contains(p.getUniqueId()) && arena.getPlayers().contains(killer.getUniqueId()) && arena.getState().equals(GameState.LIVE)) {
-                    // Both players were in the live match.
-                    arena.sendMessage(ChatColor.GOLD + "[GAME]" + ChatColor.GREEN + p.getName() + " was killed by " + killer.getName() + "!");
-                    addPoint(arena.getTeam(killer));
-
-                    e.getDrops().clear();
-                    e.getDrops().add(new ItemStack(Material.GOLDEN_APPLE));
-
-                }
-            }
-
-
-
-        }
+            e.getDrops().clear();
+            Random r = new Random();
+            e.getDrops().add(new ItemStack(Material.ARROW, r.nextInt(4 - 1) + 1));
+            e.getDrops().add(new ItemStack(Material.COOKED_BEEF, r.nextInt(4 - 1) + 1));
+            if (killer != null) { onCustomRespawn(p, killer); }
+            p.setGameMode(GameMode.SPECTATOR);
 
     }
-
+    @EventHandler
+    public void onChestClear(PlayerInteractEvent e) {
+        if (e.getHand().equals(EquipmentSlot.HAND) && e.hasBlock()) {
+            Player p = e.getPlayer();
+            if (StorageBlockTool.isStorageBlock(e.getClickedBlock())) {
+                addPoint(arena.getTeam(p));
+            }
+        }
+    }
+}

@@ -1,6 +1,8 @@
 package net.larskrs.plugins.duels.Games;
 
 import dev.jcsoftware.jscoreboards.JPerPlayerScoreboard;
+import dev.jcsoftware.jscoreboards.JScoreboardOptions;
+import dev.jcsoftware.jscoreboards.JScoreboardTabHealthStyle;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
 import net.larskrs.plugins.duels.enums.GameState;
@@ -66,7 +68,6 @@ public class LastStanding extends Game {
         this.pointsToWin = Math.round(arena.getPlayers().size() / 2);
         for (UUID uuid : arena.getPlayers()) {
             Playerpoints.put(uuid, 0);
-            teamCount.put(arena.getTeam(Bukkit.getPlayer(uuid)), teamCount.get(arena.getTeam(Bukkit.getPlayer(uuid))) + 1);
         }
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[L<ST ST<ND<NG] ");
@@ -78,9 +79,9 @@ public class LastStanding extends Game {
         for (UUID uuid : arena.getPlayers()) {
             Player p = Bukkit.getPlayer(uuid);
             p.setFireTicks(0);
-
         }
-        scoreboard = new JPerPlayerScoreboard(
+
+        this.scoreboard = new JPerPlayerScoreboard(
                 (player) -> {
                     return "&e&lDUELS";
                 },
@@ -89,12 +90,21 @@ public class LastStanding extends Game {
                             "",
                             "&eTime " + liveGameTimer.getOutput(),
                             "&d",
-                            "&ePoints &b" + points.get(arena.getTeam(player)),
+                            Team.RED.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.RED) ? true : ChatColor.GRAY + " (you)"),
+                            Team.BLUE.getDisplay() + ChatColor.AQUA + " " + points.get(Team.BLUE) + (arena.getTeam(player).equals(Team.BLUE) ? true : ChatColor.GRAY + " (you)"),
                             "&2"
                     );
                 }
+
         );
-        Bukkit.getOnlinePlayers().forEach(this::addToScoreboard);
+        scoreboard.setOptions(new JScoreboardOptions(JScoreboardTabHealthStyle.HEARTS, true));
+        List<Player> players = new ArrayList<>();
+        for (UUID u: arena.getPlayers()
+        ) {
+            players.add(Bukkit.getPlayer(u));
+        }
+        players.forEach(this::addToScoreboard);
+
 
     }
     private void addToScoreboard(Player player) {
@@ -158,7 +168,7 @@ public class LastStanding extends Game {
 
     @Override
     public void onScoreboardUpdate() {
-        scoreboard.updateScoreboard();
+        if (scoreboard!= null) {scoreboard.updateScoreboard(); }
     }
 
     @EventHandler
