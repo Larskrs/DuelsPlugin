@@ -6,19 +6,21 @@ import org.bukkit.Material;
 
 public enum Team {
 
-    RED(ChatColor.RED + "[RED]", Material.RED_WOOL, ChatColor.RED + "Red like roses.", Color.RED),
-    BLUE(ChatColor.BLUE + "[BLUE]", Material.BLUE_WOOL, ChatColor.BLUE + "Blue like blue flowers.", Color.BLUE);
+    RED(ChatColor.RED + "[RED]", Material.RED_WOOL, ChatColor.RED + "Red like roses.", Color.RED, ChatColor.RED),
+    BLUE(ChatColor.BLUE + "[BLUE]", Material.BLUE_WOOL, ChatColor.BLUE + "Blue like blue flowers.", Color.BLUE, ChatColor.BLUE);
 
     private String display;
     private Material icon;
     private String description;
     private Color color;
+    private ChatColor chatColor;
 
-    Team(String display, Material icon, String description, Color color) {
+    Team(String display, Material icon, String description, Color color, ChatColor chatColor) {
         this.display = display;
         this.icon = icon;
         this.description = description;
         this.color = color;
+        this.chatColor = chatColor;
     }
 
     public String getDisplay() {
@@ -36,4 +38,5 @@ public enum Team {
     public Color getColor() {
         return color;
     }
+    public ChatColor getChatColor () {return chatColor; }
 }
