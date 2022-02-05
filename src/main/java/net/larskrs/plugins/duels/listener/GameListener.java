@@ -225,7 +225,8 @@ public class GameListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         if (!e.getPlayer().hasPermission("simpleduels.bypass.build") || duels.getArenaManager().getArena(e.getPlayer()) != null) {
-            e.setCancelled(true);
+                e.setCancelled(true);
+
         }
     }
     @EventHandler
@@ -234,11 +235,9 @@ public class GameListener implements Listener {
         if (e.getBlock().getType() == Material.TNT) {
             e.getPlayer().getWorld().spawn(e.getBlockPlaced().getLocation(), EntityType.PRIMED_TNT.getEntityClass());
             e.setCancelled(true);
-            e.getPlayer().getInventory().removeItem(new ItemStack(Material.TNT, 1));
+            e.getPlayer().getInventory().remove(Material.TNT);
             return;
         }
-
-
         if (!e.getPlayer().hasPermission("simpleduels.bypass.build") || duels.getArenaManager().getArena(e.getPlayer()) != null) {
             e.setCancelled(true);
         }

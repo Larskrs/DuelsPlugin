@@ -203,7 +203,8 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
             p.sendMessage(ChatColor.GOLD +"  - /duel setkit <kit-name> <icon> <description>" + ChatColor.GRAY + ": let's you register or change kits.");
             p.sendMessage(ChatColor.GOLD +"  - /duel addArenakit <arena-id> <kit-name> " + ChatColor.GRAY + ": let's you add kits to an arena.");
             p.sendMessage(ChatColor.GOLD +"  - /duel removeArenakit <arena-id> <kit-name> " + ChatColor.GRAY + ": let's you remove kits from an arena.");
-            p.sendMessage(ChatColor.GOLD +"  - /duel removekit <name> " + ChatColor.GRAY + ": let's you remove kits.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel removeKit <name> " + ChatColor.GRAY + ": let's you remove kits.");
+            p.sendMessage(ChatColor.GOLD +"  - /duel getKit <kit> " + ChatColor.GRAY + ": let's you get a kit.");
             p.sendMessage(ChatColor.GOLD +"  - /duel setArenaName <arena-id> " + ChatColor.GRAY + ": let's you set arena name.");
             p.sendMessage(ChatColor.GOLD +"  - /duel setArenaLobby <arena-id> " + ChatColor.GRAY + ": let's you set arena lobby.");
             p.sendMessage(ChatColor.GOLD +"  - /duel setTeamSpawn <arena-id> <team> " + ChatColor.GRAY + ": let's you set team spawn.");
@@ -234,6 +235,8 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                 options.add("setArenaName");
                 options.add("setArenaLobby");
                 options.add("setteamspawn");
+                options.add("setarena");
+                options.add("getkit");
             }
 
             return StringUtil.copyPartialMatches(args[0], options, new ArrayList<>());
@@ -275,8 +278,13 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
                     options.add(t.name() + "");
             }
             return options;
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("getkit")) {
+            for (CustomKit kit : KitsFile.getKits()) {
+                options.add(kit.getName());
+            }
+            return options;
         }
-
         return null;
     }
+
 }

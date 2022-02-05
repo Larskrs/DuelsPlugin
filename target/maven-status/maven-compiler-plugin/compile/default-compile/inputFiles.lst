@@ -1,38 +1,41 @@
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\tools\WorldLoaderTool.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\UpdateLoop.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\GUI\TeamGUI.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\PranksterKit.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\GameListener.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\ItemListener.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\placeholers\WinAmountPlaceholder.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\KnightKit.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\commands\DuelCommand.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\ConfigManager.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\tools\StorageBlockTool.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\LastStanding.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\Kit.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\Deathmatch.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Files\KitsFile.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\CustomKit.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\Team.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\enums\KitType.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\RespawnCooldown.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\Countdown.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\LiveGameTimer.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Files\PlayerDataFile.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\ArcherKit.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\ScoreboardManager.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\Fortress.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\ArenaManager.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\Game.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\GUI\ArenaGUI.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\ConnectListener.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\GUI\KitGUI.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\RespawnCountdown.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\enums\GameState.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\Arena.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\ArenaOptions.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\CountdownItems.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\tools\XEntityType.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Duels.java
-C:\Users\Lars\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\NametagManager.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\GameMap.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\Game.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\ConfigManager.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\enums\KitType.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\Deathmatch.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\Countdown.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\GUI\ArenaGUI.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\RespawnCooldown.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\ConnectListener.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\commands\DuelCommand.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\UpdateLoop.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\GUI\TeamGUI.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\ArenaManager.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\GUI\KitGUI.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\KnightKit.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Files\KitsFile.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\CustomKit.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\LiveGameTimer.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\ScoreboardManager.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\Team.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\tools\FileUtil.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\LastStanding.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\ArenaOptions.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\placeholers\WinAmountPlaceholder.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\ItemListener.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\CountdownItems.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\managers\NametagManager.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\tools\StorageBlockTool.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\LocalGameMap.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\tools\XEntityType.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\GameListener.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\Kit.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\enums\GameState.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Games\Fortress.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\PranksterKit.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Duels.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Kits\ArcherKit.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\Files\PlayerDataFile.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\instances\Arena.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\tools\WorldLoaderTool.java
+C:\Users\Lars Kristian\IdeaProjects\DuelsPlugin\src\main\java\net\larskrs\plugins\duels\listener\RespawnCountdown.java

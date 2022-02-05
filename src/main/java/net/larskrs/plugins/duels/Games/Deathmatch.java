@@ -23,6 +23,8 @@ import net.larskrs.plugins.duels.Duels;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.*;
 
 public class Deathmatch extends Game {
@@ -62,12 +64,12 @@ public class Deathmatch extends Game {
     public void onStart() {
         arena.setState(GameState.LIVE);
 
-        liveGameTimer = new LiveGameTimer(duels, arena, 600);
-        liveGameTimer.start();
         this.pointsToWin = Math.round(ConfigManager.getGamePointsToWin(arena.getId()) * (arena.getPlayers().size() / 2));
         for (UUID uuid : arena.getPlayers()) {
             Playerpoints.put(uuid, 0);
         }
+        liveGameTimer = new LiveGameTimer(duels, arena, 120* pointsToWin);
+        liveGameTimer.start();
         arena.sendMessage(ChatColor.GREEN + "Game has started! ");
         arena.sendMessage(ChatColor.RED + "[DE>THM>TCH] ");
         arena.sendMessage(ChatColor.RED + "[OBJECTIVE]" + ChatColor.GRAY + " Get " + pointsToWin + " kills for your team!");
@@ -77,6 +79,8 @@ public class Deathmatch extends Game {
                 Player p = Bukkit.getPlayer(uuid);
                 assert p != null;
                 p.setFireTicks(0);
+                p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 9999, 5));
+                p.sendTitle(arena.getTeam(p).getDisplay(), ChatColor.GRAY + "You are playing as: " + arena.getTeam(p).getDisplay(), 1, 2, 1);
 
             }
             this.scoreboard= new JPerPlayerScoreboard(
@@ -96,18 +100,22 @@ public class Deathmatch extends Game {
 
             );
             scoreboard.setOptions(new JScoreboardOptions(JScoreboardTabHealthStyle.HEARTS, true));
-            List<Player> players = new ArrayList<>();
-        for (UUID u: arena.getPlayers()
-             ) {
-                players.add(Bukkit.getPlayer(u));
-                Team t = arena.getTeam(Bukkit.getPlayer(u));
+        for (Team t : Team.values()) {
             JScoreboardTeam jScoreboardTeam = scoreboard.createTeam(t.name(), t.getDisplay() + " ", t.getChatColor());
-                jScoreboardTeam.addPlayer(Bukkit.getPlayer(u));
-            if (!scoreboard.getTeams().contains(jScoreboardTeam)) {
-                scoreboard.getTeams().add(jScoreboardTeam);
+            for (UUID u : arena.getTeams().keySet()) {
+                if (arena.getTeam(Bukkit.getPlayer(u)) == t) {
+                    jScoreboardTeam.addPlayer(Bukkit.getPlayer(u));
+                }
             }
         }
-            players.forEach(this::addToScoreboard);
+
+        List<Player> players = new ArrayList<>();
+        for (UUID u: arena.getPlayers()
+        ) {
+            players.add(Bukkit.getPlayer(u));
+
+        }
+        players.forEach(this::addToScoreboard);
     }
     private void addToScoreboard(Player player) {
         scoreboard.addPlayer(player);
@@ -126,6 +134,7 @@ public class Deathmatch extends Game {
             addPoint(arena.getTeam(lHit));
             Playerpoints.replace(killer.getUniqueId(), Playerpoints.get(killer.getUniqueId()) + 1);
             scoreboard.updateScoreboard();
+
 
         }
     }
@@ -174,6 +183,10 @@ public class Deathmatch extends Game {
     @EventHandler
     public void onPlayerKill(PlayerDeathEvent e) {
 
+        if (duels.getArenaManager().getArena(e.getEntity()) != arena) {
+            return;
+        }
+
         if (e.getEntity().getKiller() != null) {
             Player killer = e.getEntity().getKiller();
             Player p = e.getEntity();
@@ -183,9 +196,12 @@ public class Deathmatch extends Game {
             e.getDrops().add(new ItemStack(Material.ARROW, r.nextInt(4 - 1) + 1));
             e.getDrops().add(new ItemStack(Material.COOKED_BEEF, r.nextInt(4 - 1) + 1));
             arena.sendMessage(ChatColor.GOLD + "  " + ChatColor.GREEN + p.getName() + " was killed!");
+
             new RespawnCountdown(duels, p, 10).start();
             arena.getGame().onCustomRespawn(p, killer);
             p.setGameMode(GameMode.SPECTATOR);
+            p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 9999, 5));
+
         } else {
             Player p = e.getEntity();
 

@@ -22,6 +22,7 @@ net\larskrs\plugins\duels\GUI\KitGUI.class
 net\larskrs\plugins\duels\Kits\ArcherKit.class
 net\larskrs\plugins\duels\placeholers\WinAmountPlaceholder.class
 net\larskrs\plugins\duels\Games\Game.class
+net\larskrs\plugins\duels\instances\LocalGameMap.class
 net\larskrs\plugins\duels\managers\ArenaManager.class
 net\larskrs\plugins\duels\Kits\KnightKit.class
 net\larskrs\plugins\duels\managers\Team.class
@@ -34,4 +35,6 @@ net\larskrs\plugins\duels\managers\ScoreboardManager.class
 net\larskrs\plugins\duels\commands\DuelCommand.class
 net\larskrs\plugins\duels\instances\ArenaOptions.class
 net\larskrs\plugins\duels\tools\XEntityType.class
+net\larskrs\plugins\duels\GameMap.class
 net\larskrs\plugins\duels\managers\ConfigManager.class
+net\larskrs\plugins\duels\tools\FileUtil.class

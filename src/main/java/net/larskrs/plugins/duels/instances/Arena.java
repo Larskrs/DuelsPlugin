@@ -4,6 +4,7 @@ import com.google.common.collect.TreeMultimap;
 import net.larskrs.plugins.duels.Duels;
 import net.larskrs.plugins.duels.Files.KitsFile;
 import net.larskrs.plugins.duels.Files.PlayerDataFile;
+import net.larskrs.plugins.duels.GameMap;
 import net.larskrs.plugins.duels.Games.Deathmatch;
 import net.larskrs.plugins.duels.Games.Fortress;
 import net.larskrs.plugins.duels.Games.Game;
@@ -33,6 +34,7 @@ public class Arena {
     private List<UUID> players;
     private HashMap<UUID, CustomKit> kits;
     private HashMap<UUID, Team> teams;
+    private GameMap gameMap;
     private GameState state;
     private Countdown countdown;
     private Game game;

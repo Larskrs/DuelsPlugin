@@ -1,14 +1,10 @@
 package net.larskrs.plugins.duels.managers;
 
 import net.larskrs.plugins.duels.Duels;
-import net.larskrs.plugins.duels.instances.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
-import sun.security.util.Debug;
-
-import java.util.Objects;
 
 public class ConfigManager {
 

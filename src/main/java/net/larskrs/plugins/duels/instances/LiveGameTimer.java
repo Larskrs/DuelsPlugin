@@ -54,6 +54,7 @@ public class LiveGameTimer extends BukkitRunnable {
 
         this.gameTime = 9;
         arena.getGame().onScoreboardUpdate();
+
     }
 
     public String getOutput() {
